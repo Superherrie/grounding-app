@@ -26,14 +26,39 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; }
   body { min-height: 100dvh; padding-top: env(safe-area-inset-top); padding-bottom: calc(72px + env(safe-area-inset-bottom)); touch-action: manipulation; }
+  body.no-tabs { padding-bottom: env(safe-area-inset-bottom); }
   button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
   textarea, input { font-family: inherit; }
 
   header { padding: 16px 20px 8px; display: flex; align-items: center; justify-content: space-between; }
   header h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: 0.5px; color: var(--text); }
   header .gear { padding: 8px; color: var(--text-dim); font-size: 18px; }
+  header .gear[hidden] { display: none; }
 
   main { padding: 8px 20px 24px; }
+
+  /* Auth screen */
+  .auth { max-width: 360px; margin: 40px auto 0; padding: 0 4px; }
+  .auth-logo { text-align: center; margin-bottom: 32px; }
+  .auth-logo .circles { width: 80px; height: 80px; margin: 0 auto 12px; opacity: 0.85; }
+  .auth-logo p { color: var(--text-dim); font-size: 14px; margin: 0; }
+  .auth-tabs { display: flex; background: var(--surface); border-radius: 12px; padding: 4px; margin-bottom: 24px; }
+  .auth-tabs button { flex: 1; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text-dim); transition: background 0.2s, color 0.2s; }
+  .auth-tabs button.active { background: var(--surface-2); color: var(--text); }
+  .auth-form { display: flex; flex-direction: column; gap: 12px; }
+  .auth-form input { background: var(--surface); border: 1px solid var(--surface-2); border-radius: 12px; padding: 14px 16px; color: var(--text); font-size: 16px; }
+  .auth-form input:focus { outline: none; border-color: var(--accent-soft); }
+  .auth-form button[type=submit] { background: var(--accent); color: var(--bg); padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .auth-form button[type=submit]:disabled { opacity: 0.5; }
+  .auth-msg { font-size: 13px; padding: 12px 14px; border-radius: 10px; margin-top: 4px; line-height: 1.4; }
+  .auth-msg.error { background: rgba(212, 122, 122, 0.12); color: var(--danger); }
+  .auth-msg.info { background: rgba(160, 196, 160, 0.12); color: var(--good); }
+  .auth-foot { margin-top: 24px; text-align: center; font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+  /* Loading */
+  .loading { text-align: center; padding: 80px 20px; color: var(--text-dim); font-size: 14px; }
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--surface-2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* Daily score banner */
   .score-banner { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); border: 1px solid var(--accent-soft); border-radius: 16px; padding: 16px 18px; margin-bottom: 24px; }
@@ -44,6 +69,7 @@
   .score-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; }
   .score-row .score-val { font-size: 24px; font-weight: 600; color: var(--accent); min-width: 36px; text-align: center; }
   .score-row .score-save { background: var(--accent); color: var(--bg); padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 14px; }
+  .score-row .score-save:disabled { opacity: 0.5; }
 
   .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin: 0 0 14px 4px; font-weight: 500; }
 
@@ -55,6 +81,7 @@
 
   /* Tabs */
   nav.tabs { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,15,30,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--surface-2); padding-bottom: env(safe-area-inset-bottom); display: flex; }
+  nav.tabs[hidden] { display: none; }
   nav.tabs button { flex: 1; padding: 14px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); font-size: 11px; }
   nav.tabs button.active { color: var(--accent); }
   nav.tabs button svg { width: 22px; height: 22px; }
@@ -73,6 +100,7 @@
   .modal-footer { padding: 12px 20px 20px; }
   .btn-primary { width: 100%; background: var(--accent); color: var(--bg); padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 600; }
   .btn-primary:active { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.5; }
 
   /* History */
   .chart-card { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 24px; }
@@ -97,13 +125,14 @@
   .empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
 
   /* Toast */
-  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--surface-2); color: var(--text); padding: 12px 20px; border-radius: 24px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 200; animation: toastIn 0.2s ease-out; }
+  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--surface-2); color: var(--text); padding: 12px 20px; border-radius: 24px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 200; animation: toastIn 0.2s ease-out; max-width: 80vw; text-align: center; }
   @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
   /* Settings sheet */
   .sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; display: flex; align-items: flex-end; }
   .sheet-content { background: var(--surface); width: 100%; border-radius: 20px 20px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); animation: slideUp 0.25s ease-out; }
-  .sheet h3 { margin: 0 0 16px; font-size: 16px; }
+  .sheet h3 { margin: 0 0 4px; font-size: 16px; }
+  .sheet .who { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; word-break: break-all; }
   .sheet-btn { display: block; width: 100%; text-align: left; padding: 14px 16px; background: var(--surface-2); border-radius: 12px; margin-bottom: 8px; font-size: 15px; }
   .sheet-btn.danger { color: var(--danger); }
 </style>
@@ -112,12 +141,12 @@
 
 <header>
   <h1>Grounding</h1>
-  <button class="gear" id="gearBtn" aria-label="Settings">⚙</button>
+  <button class="gear" id="gearBtn" aria-label="Settings" hidden>⚙</button>
 </header>
 
 <main id="view"></main>
 
-<nav class="tabs">
+<nav class="tabs" id="tabs" hidden>
   <button data-tab="home" class="active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 4l9 8v8a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1v-8z"/></svg>
     Home
@@ -128,7 +157,14 @@
   </button>
 </nav>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/* ============ CONFIG ============ */
+
+const SUPABASE_URL = 'https://yhgkqmaekxexwptomwhn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_VToOmYgJprgZvCl2R5_8Kw_GLX7SPil';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 /* ============ DATA ============ */
 
 const FEELINGS = [
@@ -154,30 +190,14 @@ const FEELINGS = [
   { name: 'Peaceful',    emoji: '🕊', reference: 'John 14:27',         verse: 'Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them fear.' },
 ];
 
-/* ============ STORAGE ============ */
+/* ============ STATE ============ */
 
-const STORAGE_KEY = 'grounding.entries.v1';
+let currentUser = null;
+let cachedEntries = [];
+let currentTab = 'home';
+let authMode = 'login';
 
-function loadEntries() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
-}
-
-function saveEntries(entries) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-}
-
-function addEntry(entry) {
-  const entries = loadEntries();
-  entries.push({ id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), ...entry });
-  saveEntries(entries);
-}
-
-function deleteEntry(id) {
-  saveEntries(loadEntries().filter((e) => e.id !== id));
-}
+/* ============ DATA HELPERS ============ */
 
 function todayKey(ts = Date.now()) {
   const d = new Date(ts);
@@ -186,21 +206,155 @@ function todayKey(ts = Date.now()) {
 
 function hasScoreToday() {
   const today = todayKey();
-  return loadEntries().some((e) => e.type === 'score' && todayKey(e.timestamp) === today);
+  return cachedEntries.some((e) => e.type === 'score' && todayKey(e.timestamp_ms) === today);
 }
 
-/* ============ STATE & RENDERING ============ */
+async function fetchEntries() {
+  const { data, error } = await sb
+    .from('entries')
+    .select('*')
+    .order('timestamp_ms', { ascending: false });
+  if (error) {
+    console.error('fetch error', error);
+    return [];
+  }
+  return data || [];
+}
 
-let currentTab = 'home';
+async function addEntry(entry) {
+  const row = {
+    user_id: currentUser.id,
+    type: entry.type,
+    feeling: entry.feeling || null,
+    emoji: entry.emoji || null,
+    reference: entry.reference || null,
+    verse: entry.verse || null,
+    note: entry.note || null,
+    score: entry.score || null,
+    timestamp_ms: entry.timestamp,
+  };
+  const { data, error } = await sb.from('entries').insert(row).select().single();
+  if (error) { console.error('insert error', error); throw error; }
+  cachedEntries = [data, ...cachedEntries];
+  return data;
+}
+
+async function deleteEntry(id) {
+  const { error } = await sb.from('entries').delete().eq('id', id);
+  if (error) { console.error('delete error', error); throw error; }
+  cachedEntries = cachedEntries.filter((e) => e.id !== id);
+}
+
+/* ============ AUTH ============ */
+
+async function signUp(email, password) {
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: window.location.origin + window.location.pathname }
+  });
+  if (error) throw error;
+  return data;
+}
+
+async function signIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+}
+
+/* ============ ROOT RENDER ============ */
+
 const view = document.getElementById('view');
+const tabsEl = document.getElementById('tabs');
+const gearEl = document.getElementById('gearBtn');
 
-function render() {
+async function renderRoot() {
+  if (!currentUser) {
+    tabsEl.hidden = true;
+    gearEl.hidden = true;
+    document.body.classList.add('no-tabs');
+    renderAuth();
+    return;
+  }
+  tabsEl.hidden = false;
+  gearEl.hidden = false;
+  document.body.classList.remove('no-tabs');
   if (currentTab === 'home') renderHome();
   else renderHistory();
   document.querySelectorAll('nav.tabs button').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === currentTab);
   });
 }
+
+/* ============ AUTH SCREEN ============ */
+
+function renderAuth() {
+  view.innerHTML = `
+    <div class="auth">
+      <div class="auth-logo">
+        <svg class="circles" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.4"/>
+          <circle cx="50" cy="50" r="26" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.6"/>
+          <circle cx="50" cy="50" r="14" fill="none" stroke="#d4af37" stroke-width="2"/>
+          <circle cx="50" cy="50" r="3" fill="#d4af37"/>
+        </svg>
+        <p>Pick how you feel. Find a verse. Track over time.</p>
+      </div>
+      <div class="auth-tabs">
+        <button data-mode="login" class="${authMode === 'login' ? 'active' : ''}">Log in</button>
+        <button data-mode="signup" class="${authMode === 'signup' ? 'active' : ''}">Sign up</button>
+      </div>
+      <form class="auth-form" id="authForm">
+        <input type="email" name="email" placeholder="Email" autocomplete="email" required>
+        <input type="password" name="password" placeholder="Password" autocomplete="${authMode === 'signup' ? 'new-password' : 'current-password'}" required minlength="6">
+        <button type="submit" id="authSubmit">${authMode === 'login' ? 'Log in' : 'Create account'}</button>
+        <div id="authMsg"></div>
+      </form>
+      <p class="auth-foot">Your entries are stored privately to your account. Only you can see them.</p>
+    </div>
+  `;
+  view.querySelectorAll('.auth-tabs button').forEach((b) => {
+    b.addEventListener('click', () => { authMode = b.dataset.mode; renderAuth(); });
+  });
+  document.getElementById('authForm').addEventListener('submit', handleAuthSubmit);
+}
+
+async function handleAuthSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const submit = form.querySelector('#authSubmit');
+  const msg = form.querySelector('#authMsg');
+  msg.className = '';
+  msg.textContent = '';
+  submit.disabled = true;
+  submit.textContent = authMode === 'login' ? 'Logging in…' : 'Creating account…';
+  const email = form.email.value.trim();
+  const password = form.password.value;
+  try {
+    if (authMode === 'login') {
+      await signIn(email, password);
+    } else {
+      const { user, session } = await signUp(email, password);
+      if (user && !session) {
+        msg.className = 'auth-msg info';
+        msg.textContent = 'Check your email to confirm your account. Then come back here and log in.';
+      }
+    }
+  } catch (err) {
+    msg.className = 'auth-msg error';
+    msg.textContent = err.message || 'Something went wrong.';
+  } finally {
+    submit.disabled = false;
+    submit.textContent = authMode === 'login' ? 'Log in' : 'Create account';
+  }
+}
+
+/* ============ HOME / HISTORY ============ */
 
 function renderHome() {
   const showScore = !hasScoreToday();
@@ -230,45 +384,55 @@ function renderHome() {
   if (showScore) {
     const slider = document.getElementById('scoreSlider');
     const val = document.getElementById('scoreVal');
+    const save = document.getElementById('scoreSave');
     slider.addEventListener('input', () => val.textContent = slider.value);
-    document.getElementById('scoreSave').addEventListener('click', () => {
-      addEntry({ type: 'score', score: Number(slider.value), timestamp: Date.now() });
-      toast('Score logged');
-      render();
+    save.addEventListener('click', async () => {
+      save.disabled = true;
+      save.textContent = '…';
+      try {
+        await addEntry({ type: 'score', score: Number(slider.value), timestamp: Date.now() });
+        toast('Score logged');
+        renderRoot();
+      } catch (err) {
+        toast('Could not save: ' + (err.message || 'unknown error'));
+        save.disabled = false;
+        save.textContent = 'Save';
+      }
     });
   }
 }
 
 function renderHistory() {
-  const entries = loadEntries().slice().sort((a, b) => b.timestamp - a.timestamp);
+  const entries = cachedEntries.slice().sort((a, b) => b.timestamp_ms - a.timestamp_ms);
   if (entries.length === 0) {
     view.innerHTML = `<div class="empty">Nothing logged yet.<br>Pick a feeling on the Home tab to start.</div>`;
     return;
   }
-
   const chartHtml = renderChart(entries);
   const grouped = groupByDay(entries);
-  const dayHtml = grouped.map(({ dayKey, label, items }) => `
+  const dayHtml = grouped.map(({ label, items }) => `
     <div class="day-group">
       <h4 class="day-header">${label}</h4>
       ${items.map(entryHtml).join('')}
     </div>
   `).join('');
-
   view.innerHTML = chartHtml + dayHtml;
 
   view.querySelectorAll('[data-del]').forEach((b) => {
-    b.addEventListener('click', () => {
-      if (confirm('Delete this entry?')) {
-        deleteEntry(b.dataset.del);
-        render();
+    b.addEventListener('click', async () => {
+      if (!confirm('Delete this entry?')) return;
+      try {
+        await deleteEntry(b.dataset.del);
+        renderRoot();
+      } catch (err) {
+        toast('Could not delete: ' + (err.message || 'unknown error'));
       }
     });
   });
 }
 
 function renderChart(entries) {
-  const scores = entries.filter((e) => e.type === 'score').slice().sort((a, b) => a.timestamp - b.timestamp);
+  const scores = entries.filter((e) => e.type === 'score').slice().sort((a, b) => a.timestamp_ms - b.timestamp_ms);
   if (scores.length === 0) return '';
   const recent = scores.slice(-30);
   const W = 320, H = 100, P = 12;
@@ -294,7 +458,7 @@ function renderChart(entries) {
 function groupByDay(entries) {
   const map = new Map();
   entries.forEach((e) => {
-    const key = todayKey(e.timestamp);
+    const key = todayKey(e.timestamp_ms);
     if (!map.has(key)) map.set(key, []);
     map.get(key).push(e);
   });
@@ -305,7 +469,7 @@ function groupByDay(entries) {
     if (dayKey === today) label = 'Today';
     else if (dayKey === yesterday) label = 'Yesterday';
     else {
-      const d = new Date(items[0].timestamp);
+      const d = new Date(items[0].timestamp_ms);
       label = d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
     }
     return { dayKey, label, items };
@@ -313,7 +477,7 @@ function groupByDay(entries) {
 }
 
 function entryHtml(e) {
-  const time = new Date(e.timestamp).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  const time = new Date(e.timestamp_ms).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
   if (e.type === 'score') {
     return `
       <div class="entry">
@@ -365,26 +529,35 @@ function openVerse(feeling) {
       <textarea class="note-input" placeholder="A note for yourself (optional)" rows="3"></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn-primary">Save & ground</button>
+      <button class="btn-primary" id="modalSave">Save & ground</button>
     </div>
   `;
   document.body.appendChild(modal);
   const close = () => modal.remove();
   modal.querySelector('.close').addEventListener('click', close);
-  modal.querySelector('.btn-primary').addEventListener('click', () => {
+  const saveBtn = modal.querySelector('#modalSave');
+  saveBtn.addEventListener('click', async () => {
     const note = modal.querySelector('.note-input').value.trim();
-    addEntry({
-      type: 'feeling',
-      feeling: feeling.name,
-      emoji: feeling.emoji,
-      reference: feeling.reference,
-      verse: feeling.verse,
-      note: note || undefined,
-      timestamp: Date.now(),
-    });
-    toast('Saved');
-    close();
-    render();
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    try {
+      await addEntry({
+        type: 'feeling',
+        feeling: feeling.name,
+        emoji: feeling.emoji,
+        reference: feeling.reference,
+        verse: feeling.verse,
+        note: note || undefined,
+        timestamp: Date.now(),
+      });
+      toast('Saved');
+      close();
+      renderRoot();
+    } catch (err) {
+      toast('Could not save: ' + (err.message || 'unknown error'));
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save & ground';
+    }
   });
 }
 
@@ -396,9 +569,9 @@ function openSettings() {
   sheet.innerHTML = `
     <div class="sheet-content">
       <h3>Settings</h3>
-      <button class="sheet-btn" id="exportBtn">Export data (JSON)</button>
-      <button class="sheet-btn" id="importBtn">Import data (JSON)</button>
-      <button class="sheet-btn danger" id="clearBtn">Clear all data</button>
+      <p class="who">Signed in as ${escapeHtml(currentUser.email)}</p>
+      <button class="sheet-btn" id="exportBtn">Export my data (JSON)</button>
+      <button class="sheet-btn danger" id="signOutBtn">Sign out</button>
       <button class="sheet-btn" id="cancelBtn" style="margin-top:12px; text-align:center; background:transparent; color:var(--text-dim);">Cancel</button>
     </div>
   `;
@@ -407,7 +580,7 @@ function openSettings() {
   sheet.addEventListener('click', (e) => { if (e.target === sheet) close(); });
   sheet.querySelector('#cancelBtn').addEventListener('click', close);
   sheet.querySelector('#exportBtn').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(loadEntries(), null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(cachedEntries, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -416,37 +589,10 @@ function openSettings() {
     URL.revokeObjectURL(url);
     close();
   });
-  sheet.querySelector('#importBtn').addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json,.json';
-    input.addEventListener('change', () => {
-      const file = input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const data = JSON.parse(reader.result);
-          if (!Array.isArray(data)) throw new Error('Not an array');
-          saveEntries(data);
-          toast('Imported');
-          close();
-          render();
-        } catch {
-          alert('Could not read that file.');
-        }
-      };
-      reader.readAsText(file);
-    });
-    input.click();
-  });
-  sheet.querySelector('#clearBtn').addEventListener('click', () => {
-    if (confirm('Delete all entries? This cannot be undone.')) {
-      saveEntries([]);
-      toast('Cleared');
-      close();
-      render();
-    }
+  sheet.querySelector('#signOutBtn').addEventListener('click', async () => {
+    if (!confirm('Sign out?')) return;
+    await signOut();
+    close();
   });
 }
 
@@ -461,17 +607,42 @@ function toast(msg) {
   t.className = 'toast';
   t.textContent = msg;
   document.body.appendChild(t);
-  toastTimer = setTimeout(() => t.remove(), 1800);
+  toastTimer = setTimeout(() => t.remove(), 2400);
 }
 
 /* ============ INIT ============ */
 
 document.querySelectorAll('nav.tabs button').forEach((b) => {
-  b.addEventListener('click', () => { currentTab = b.dataset.tab; render(); });
+  b.addEventListener('click', () => { currentTab = b.dataset.tab; renderRoot(); });
 });
-document.getElementById('gearBtn').addEventListener('click', openSettings);
+gearEl.addEventListener('click', openSettings);
 
-render();
+async function bootstrap() {
+  view.innerHTML = `<div class="loading"><span class="spinner"></span>Loading…</div>`;
+
+  const { data: { session } } = await sb.auth.getSession();
+  currentUser = session?.user || null;
+
+  if (currentUser) {
+    cachedEntries = await fetchEntries();
+  }
+  renderRoot();
+
+  sb.auth.onAuthStateChange(async (event, session) => {
+    const wasUser = currentUser?.id;
+    currentUser = session?.user || null;
+    if (currentUser && currentUser.id !== wasUser) {
+      view.innerHTML = `<div class="loading"><span class="spinner"></span>Loading entries…</div>`;
+      cachedEntries = await fetchEntries();
+    }
+    if (!currentUser) {
+      cachedEntries = [];
+    }
+    renderRoot();
+  });
+}
+
+bootstrap();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
