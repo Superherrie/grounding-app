@@ -1,0 +1,18 @@
+{
+  "name": "Grounding",
+  "short_name": "Grounding",
+  "description": "A grounding statement app — pick how you feel, get a verse, track your mental health over time.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f0f1e",
+  "theme_color": "#0f0f1e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

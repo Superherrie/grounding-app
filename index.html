@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0f0f1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Grounding">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon.svg">
+<title>Grounding</title>
+<style>
+  :root {
+    --bg: #0f0f1e;
+    --surface: #1c1c33;
+    --surface-2: #252544;
+    --accent: #d4af37;
+    --accent-soft: #d4af3722;
+    --text: #ece9e0;
+    --text-dim: #9b9aaa;
+    --danger: #d47a7a;
+    --good: #a0c4a0;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; }
+  body { min-height: 100dvh; padding-top: env(safe-area-inset-top); padding-bottom: calc(72px + env(safe-area-inset-bottom)); touch-action: manipulation; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  textarea, input { font-family: inherit; }
+
+  header { padding: 16px 20px 8px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: 0.5px; color: var(--text); }
+  header .gear { padding: 8px; color: var(--text-dim); font-size: 18px; }
+
+  main { padding: 8px 20px 24px; }
+
+  /* Daily score banner */
+  .score-banner { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); border: 1px solid var(--accent-soft); border-radius: 16px; padding: 16px 18px; margin-bottom: 24px; }
+  .score-banner h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: var(--accent); }
+  .score-banner p { margin: 0 0 14px; font-size: 13px; color: var(--text-dim); }
+  .score-row { display: flex; align-items: center; gap: 12px; }
+  .score-row input[type=range] { flex: 1; -webkit-appearance: none; appearance: none; height: 6px; background: var(--surface-2); border-radius: 3px; outline: none; }
+  .score-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; cursor: pointer; }
+  .score-row .score-val { font-size: 24px; font-weight: 600; color: var(--accent); min-width: 36px; text-align: center; }
+  .score-row .score-save { background: var(--accent); color: var(--bg); padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 14px; }
+
+  .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin: 0 0 14px 4px; font-weight: 500; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .feeling-btn { background: var(--surface); border-radius: 14px; padding: 18px 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: transform 0.1s, background 0.2s; }
+  .feeling-btn:active { transform: scale(0.96); background: var(--surface-2); }
+  .feeling-btn .emoji { font-size: 28px; }
+  .feeling-btn .name { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  /* Tabs */
+  nav.tabs { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,15,30,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--surface-2); padding-bottom: env(safe-area-inset-bottom); display: flex; }
+  nav.tabs button { flex: 1; padding: 14px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); font-size: 11px; }
+  nav.tabs button.active { color: var(--accent); }
+  nav.tabs button svg { width: 22px; height: 22px; }
+
+  /* Verse modal */
+  .modal { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); animation: slideUp 0.25s ease-out; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; }
+  .modal-header .feeling-label { font-size: 14px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; }
+  .modal-header .close { padding: 8px; color: var(--text-dim); font-size: 24px; line-height: 1; }
+  .modal-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+  .verse-text { font-size: 19px; line-height: 1.6; color: var(--text); font-weight: 400; letter-spacing: 0.2px; }
+  .verse-ref { margin-top: 18px; font-size: 14px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
+  .note-input { width: 100%; background: var(--surface); border: 1px solid var(--surface-2); border-radius: 12px; padding: 12px 14px; color: var(--text); font-size: 15px; min-height: 80px; resize: none; margin-top: 28px; }
+  .note-input:focus { outline: none; border-color: var(--accent-soft); }
+  .modal-footer { padding: 12px 20px 20px; }
+  .btn-primary { width: 100%; background: var(--accent); color: var(--bg); padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 600; }
+  .btn-primary:active { opacity: 0.85; }
+
+  /* History */
+  .chart-card { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 24px; }
+  .chart-card h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
+  .chart-card .sub { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+  .chart-card svg { width: 100%; height: 120px; display: block; }
+
+  .day-group { margin-bottom: 24px; }
+  .day-header { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin: 0 4px 10px; }
+  .entry { background: var(--surface); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+  .entry .icon { font-size: 20px; flex-shrink: 0; width: 32px; text-align: center; }
+  .entry .body { flex: 1; min-width: 0; }
+  .entry .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .entry .meta .label { font-size: 14px; font-weight: 500; }
+  .entry .meta .time { font-size: 11px; color: var(--text-dim); }
+  .entry .sub-text { font-size: 12px; color: var(--text-dim); margin-top: 2px; line-height: 1.4; }
+  .entry .note { font-size: 13px; color: var(--text); margin-top: 6px; font-style: italic; opacity: 0.85; line-height: 1.4; }
+  .entry-actions { margin-top: 8px; }
+  .entry-actions button { font-size: 11px; color: var(--text-dim); padding: 4px 8px; }
+  .entry-actions button:hover { color: var(--danger); }
+
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--surface-2); color: var(--text); padding: 12px 20px; border-radius: 24px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 200; animation: toastIn 0.2s ease-out; }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+  /* Settings sheet */
+  .sheet { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; display: flex; align-items: flex-end; }
+  .sheet-content { background: var(--surface); width: 100%; border-radius: 20px 20px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); animation: slideUp 0.25s ease-out; }
+  .sheet h3 { margin: 0 0 16px; font-size: 16px; }
+  .sheet-btn { display: block; width: 100%; text-align: left; padding: 14px 16px; background: var(--surface-2); border-radius: 12px; margin-bottom: 8px; font-size: 15px; }
+  .sheet-btn.danger { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Grounding</h1>
+  <button class="gear" id="gearBtn" aria-label="Settings">⚙</button>
+</header>
+
+<main id="view"></main>
+
+<nav class="tabs">
+  <button data-tab="home" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 4l9 8v8a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1v-8z"/></svg>
+    Home
+  </button>
+  <button data-tab="history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.04 9.04 0 00-7.6 4.2M3 4v4h4M12 7v5l3 2"/></svg>
+    History
+  </button>
+</nav>
+
+<script>
+/* ============ DATA ============ */
+
+const FEELINGS = [
+  { name: 'Anxious',     emoji: '😰', reference: 'Philippians 4:6-7',  verse: 'Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and minds in Christ Jesus.' },
+  { name: 'Afraid',      emoji: '😨', reference: 'Isaiah 41:10',       verse: 'Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.' },
+  { name: 'Overwhelmed', emoji: '🌊', reference: 'Matthew 11:28-30',   verse: 'Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls. For my yoke is easy, and my burden is light.' },
+  { name: 'Sad',         emoji: '😢', reference: 'Psalm 34:18',        verse: 'The Lord is near to the brokenhearted and saves the crushed in spirit.' },
+  { name: 'Angry',       emoji: '😤', reference: 'James 1:19-20',      verse: 'Know this, my beloved brothers: let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God.' },
+  { name: 'Lonely',      emoji: '🌙', reference: 'Deuteronomy 31:6',   verse: 'Be strong and courageous. Do not fear or be in dread of them, for it is the Lord your God who goes with you. He will not leave you or forsake you.' },
+  { name: 'Guilty',      emoji: '🪨', reference: '1 John 1:9',         verse: 'If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.' },
+  { name: 'Discouraged', emoji: '🍂', reference: 'Joshua 1:9',         verse: 'Have I not commanded you? Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.' },
+  { name: 'Weary',       emoji: '😴', reference: 'Isaiah 40:31',       verse: 'But they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.' },
+  { name: 'Doubtful',    emoji: '🌫', reference: 'Mark 9:24',          verse: 'Immediately the father of the child cried out and said, "I believe; help my unbelief!"' },
+  { name: 'Stressed',    emoji: '😬', reference: 'Psalm 55:22',        verse: 'Cast your burden on the Lord, and he will sustain you; he will never permit the righteous to be moved.' },
+  { name: 'Insecure',    emoji: '🪞', reference: 'Psalm 139:14',       verse: 'I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.' },
+  { name: 'Jealous',     emoji: '👁', reference: 'James 3:16',         verse: 'For where jealousy and selfish ambition exist, there will be disorder and every vile practice.' },
+  { name: 'Restless',    emoji: '🌀', reference: 'Psalm 46:10',        verse: 'Be still, and know that I am God. I will be exalted among the nations, I will be exalted in the earth!' },
+  { name: 'Bitter',      emoji: '🍋', reference: 'Ephesians 4:31-32',  verse: 'Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.' },
+  { name: 'Tempted',     emoji: '🪤', reference: '1 Corinthians 10:13', verse: 'No temptation has overtaken you that is not common to man. God is faithful, and he will not let you be tempted beyond your ability, but with the temptation he will also provide the way of escape, that you may be able to endure it.' },
+  { name: 'Hopeless',    emoji: '🌑', reference: 'Romans 15:13',       verse: 'May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.' },
+  { name: 'Confused',    emoji: '❓', reference: 'Proverbs 3:5-6',     verse: 'Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.' },
+  { name: 'Grateful',    emoji: '🌿', reference: 'Psalm 100:4',        verse: 'Enter his gates with thanksgiving, and his courts with praise! Give thanks to him; bless his name!' },
+  { name: 'Peaceful',    emoji: '🕊', reference: 'John 14:27',         verse: 'Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them fear.' },
+];
+
+/* ============ STORAGE ============ */
+
+const STORAGE_KEY = 'grounding.entries.v1';
+
+function loadEntries() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function addEntry(entry) {
+  const entries = loadEntries();
+  entries.push({ id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), ...entry });
+  saveEntries(entries);
+}
+
+function deleteEntry(id) {
+  saveEntries(loadEntries().filter((e) => e.id !== id));
+}
+
+function todayKey(ts = Date.now()) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function hasScoreToday() {
+  const today = todayKey();
+  return loadEntries().some((e) => e.type === 'score' && todayKey(e.timestamp) === today);
+}
+
+/* ============ STATE & RENDERING ============ */
+
+let currentTab = 'home';
+const view = document.getElementById('view');
+
+function render() {
+  if (currentTab === 'home') renderHome();
+  else renderHistory();
+  document.querySelectorAll('nav.tabs button').forEach((b) => {
+    b.classList.toggle('active', b.dataset.tab === currentTab);
+  });
+}
+
+function renderHome() {
+  const showScore = !hasScoreToday();
+  view.innerHTML = `
+    ${showScore ? `
+      <div class="score-banner">
+        <h3>Daily check-in</h3>
+        <p>How's your mental health today, 1 (low) to 10 (great)?</p>
+        <div class="score-row">
+          <input type="range" id="scoreSlider" min="1" max="10" value="7">
+          <span class="score-val" id="scoreVal">7</span>
+          <button class="score-save" id="scoreSave">Save</button>
+        </div>
+      </div>
+    ` : ''}
+    <p class="section-title">How are you feeling?</p>
+    <div class="grid" id="feelingGrid"></div>
+  `;
+  const grid = document.getElementById('feelingGrid');
+  FEELINGS.forEach((f) => {
+    const btn = document.createElement('button');
+    btn.className = 'feeling-btn';
+    btn.innerHTML = `<span class="emoji">${f.emoji}</span><span class="name">${f.name}</span>`;
+    btn.addEventListener('click', () => openVerse(f));
+    grid.appendChild(btn);
+  });
+  if (showScore) {
+    const slider = document.getElementById('scoreSlider');
+    const val = document.getElementById('scoreVal');
+    slider.addEventListener('input', () => val.textContent = slider.value);
+    document.getElementById('scoreSave').addEventListener('click', () => {
+      addEntry({ type: 'score', score: Number(slider.value), timestamp: Date.now() });
+      toast('Score logged');
+      render();
+    });
+  }
+}
+
+function renderHistory() {
+  const entries = loadEntries().slice().sort((a, b) => b.timestamp - a.timestamp);
+  if (entries.length === 0) {
+    view.innerHTML = `<div class="empty">Nothing logged yet.<br>Pick a feeling on the Home tab to start.</div>`;
+    return;
+  }
+
+  const chartHtml = renderChart(entries);
+  const grouped = groupByDay(entries);
+  const dayHtml = grouped.map(({ dayKey, label, items }) => `
+    <div class="day-group">
+      <h4 class="day-header">${label}</h4>
+      ${items.map(entryHtml).join('')}
+    </div>
+  `).join('');
+
+  view.innerHTML = chartHtml + dayHtml;
+
+  view.querySelectorAll('[data-del]').forEach((b) => {
+    b.addEventListener('click', () => {
+      if (confirm('Delete this entry?')) {
+        deleteEntry(b.dataset.del);
+        render();
+      }
+    });
+  });
+}
+
+function renderChart(entries) {
+  const scores = entries.filter((e) => e.type === 'score').slice().sort((a, b) => a.timestamp - b.timestamp);
+  if (scores.length === 0) return '';
+  const recent = scores.slice(-30);
+  const W = 320, H = 100, P = 12;
+  const xStep = recent.length > 1 ? (W - P * 2) / (recent.length - 1) : 0;
+  const yFor = (s) => H - P - ((s - 1) / 9) * (H - P * 2);
+  const pts = recent.map((s, i) => [P + i * xStep, yFor(s.score)]);
+  const line = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const dots = pts.map((p) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#d4af37"/>`).join('');
+  const avg = (recent.reduce((s, e) => s + e.score, 0) / recent.length).toFixed(1);
+  return `
+    <div class="chart-card">
+      <h3>Mental health over time</h3>
+      <p class="sub">${recent.length} entr${recent.length === 1 ? 'y' : 'ies'} · avg ${avg}/10</p>
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <line x1="${P}" y1="${yFor(5.5)}" x2="${W - P}" y2="${yFor(5.5)}" stroke="#252544" stroke-dasharray="2,3"/>
+        <path d="${line}" fill="none" stroke="#d4af37" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        ${dots}
+      </svg>
+    </div>
+  `;
+}
+
+function groupByDay(entries) {
+  const map = new Map();
+  entries.forEach((e) => {
+    const key = todayKey(e.timestamp);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(e);
+  });
+  const today = todayKey();
+  const yesterday = todayKey(Date.now() - 86400000);
+  return Array.from(map.entries()).map(([dayKey, items]) => {
+    let label;
+    if (dayKey === today) label = 'Today';
+    else if (dayKey === yesterday) label = 'Yesterday';
+    else {
+      const d = new Date(items[0].timestamp);
+      label = d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+    }
+    return { dayKey, label, items };
+  });
+}
+
+function entryHtml(e) {
+  const time = new Date(e.timestamp).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  if (e.type === 'score') {
+    return `
+      <div class="entry">
+        <div class="icon">📊</div>
+        <div class="body">
+          <div class="meta">
+            <span class="label">Score: ${e.score}/10</span>
+            <span class="time">${time}</span>
+          </div>
+          ${e.note ? `<div class="note">"${escapeHtml(e.note)}"</div>` : ''}
+          <div class="entry-actions"><button data-del="${e.id}">Delete</button></div>
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="entry">
+      <div class="icon">${e.emoji || '·'}</div>
+      <div class="body">
+        <div class="meta">
+          <span class="label">${escapeHtml(e.feeling)}</span>
+          <span class="time">${time}</span>
+        </div>
+        <div class="sub-text">${escapeHtml(e.reference)}</div>
+        ${e.note ? `<div class="note">"${escapeHtml(e.note)}"</div>` : ''}
+        <div class="entry-actions"><button data-del="${e.id}">Delete</button></div>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ============ VERSE MODAL ============ */
+
+function openVerse(feeling) {
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-header">
+      <span class="feeling-label">${feeling.emoji} ${feeling.name}</span>
+      <button class="close" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="verse-text">${escapeHtml(feeling.verse)}</div>
+      <div class="verse-ref">${escapeHtml(feeling.reference)}</div>
+      <textarea class="note-input" placeholder="A note for yourself (optional)" rows="3"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary">Save & ground</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  const close = () => modal.remove();
+  modal.querySelector('.close').addEventListener('click', close);
+  modal.querySelector('.btn-primary').addEventListener('click', () => {
+    const note = modal.querySelector('.note-input').value.trim();
+    addEntry({
+      type: 'feeling',
+      feeling: feeling.name,
+      emoji: feeling.emoji,
+      reference: feeling.reference,
+      verse: feeling.verse,
+      note: note || undefined,
+      timestamp: Date.now(),
+    });
+    toast('Saved');
+    close();
+    render();
+  });
+}
+
+/* ============ SETTINGS SHEET ============ */
+
+function openSettings() {
+  const sheet = document.createElement('div');
+  sheet.className = 'sheet';
+  sheet.innerHTML = `
+    <div class="sheet-content">
+      <h3>Settings</h3>
+      <button class="sheet-btn" id="exportBtn">Export data (JSON)</button>
+      <button class="sheet-btn" id="importBtn">Import data (JSON)</button>
+      <button class="sheet-btn danger" id="clearBtn">Clear all data</button>
+      <button class="sheet-btn" id="cancelBtn" style="margin-top:12px; text-align:center; background:transparent; color:var(--text-dim);">Cancel</button>
+    </div>
+  `;
+  document.body.appendChild(sheet);
+  const close = () => sheet.remove();
+  sheet.addEventListener('click', (e) => { if (e.target === sheet) close(); });
+  sheet.querySelector('#cancelBtn').addEventListener('click', close);
+  sheet.querySelector('#exportBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(loadEntries(), null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `grounding-${todayKey()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    close();
+  });
+  sheet.querySelector('#importBtn').addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json,.json';
+    input.addEventListener('change', () => {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!Array.isArray(data)) throw new Error('Not an array');
+          saveEntries(data);
+          toast('Imported');
+          close();
+          render();
+        } catch {
+          alert('Could not read that file.');
+        }
+      };
+      reader.readAsText(file);
+    });
+    input.click();
+  });
+  sheet.querySelector('#clearBtn').addEventListener('click', () => {
+    if (confirm('Delete all entries? This cannot be undone.')) {
+      saveEntries([]);
+      toast('Cleared');
+      close();
+      render();
+    }
+  });
+}
+
+/* ============ TOAST ============ */
+
+let toastTimer;
+function toast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  clearTimeout(toastTimer);
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  toastTimer = setTimeout(() => t.remove(), 1800);
+}
+
+/* ============ INIT ============ */
+
+document.querySelectorAll('nav.tabs button').forEach((b) => {
+  b.addEventListener('click', () => { currentTab = b.dataset.tab; render(); });
+});
+document.getElementById('gearBtn').addEventListener('click', openSettings);
+
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+
+</body>
+</html>
