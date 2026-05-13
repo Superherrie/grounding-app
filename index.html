@@ -168,27 +168,111 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 /* ============ DATA ============ */
 
 const FEELINGS = [
-  { name: 'Anxious',     emoji: '😰', reference: 'Philippians 4:6-7',  verse: 'Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and minds in Christ Jesus.' },
-  { name: 'Afraid',      emoji: '😨', reference: 'Isaiah 41:10',       verse: 'Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.' },
-  { name: 'Overwhelmed', emoji: '🌊', reference: 'Matthew 11:28-30',   verse: 'Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls. For my yoke is easy, and my burden is light.' },
-  { name: 'Sad',         emoji: '😢', reference: 'Psalm 34:18',        verse: 'The Lord is near to the brokenhearted and saves the crushed in spirit.' },
-  { name: 'Angry',       emoji: '😤', reference: 'James 1:19-20',      verse: 'Know this, my beloved brothers: let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God.' },
-  { name: 'Lonely',      emoji: '🌙', reference: 'Deuteronomy 31:6',   verse: 'Be strong and courageous. Do not fear or be in dread of them, for it is the Lord your God who goes with you. He will not leave you or forsake you.' },
-  { name: 'Guilty',      emoji: '🪨', reference: '1 John 1:9',         verse: 'If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.' },
-  { name: 'Discouraged', emoji: '🍂', reference: 'Joshua 1:9',         verse: 'Have I not commanded you? Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.' },
-  { name: 'Weary',       emoji: '😴', reference: 'Isaiah 40:31',       verse: 'But they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.' },
-  { name: 'Doubtful',    emoji: '🌫', reference: 'Mark 9:24',          verse: 'Immediately the father of the child cried out and said, "I believe; help my unbelief!"' },
-  { name: 'Stressed',    emoji: '😬', reference: 'Psalm 55:22',        verse: 'Cast your burden on the Lord, and he will sustain you; he will never permit the righteous to be moved.' },
-  { name: 'Insecure',    emoji: '🪞', reference: 'Psalm 139:14',       verse: 'I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.' },
-  { name: 'Jealous',     emoji: '👁', reference: 'James 3:16',         verse: 'For where jealousy and selfish ambition exist, there will be disorder and every vile practice.' },
-  { name: 'Restless',    emoji: '🌀', reference: 'Psalm 46:10',        verse: 'Be still, and know that I am God. I will be exalted among the nations, I will be exalted in the earth!' },
-  { name: 'Bitter',      emoji: '🍋', reference: 'Ephesians 4:31-32',  verse: 'Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.' },
-  { name: 'Tempted',     emoji: '🪤', reference: '1 Corinthians 10:13', verse: 'No temptation has overtaken you that is not common to man. God is faithful, and he will not let you be tempted beyond your ability, but with the temptation he will also provide the way of escape, that you may be able to endure it.' },
-  { name: 'Hopeless',    emoji: '🌑', reference: 'Romans 15:13',       verse: 'May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.' },
-  { name: 'Confused',    emoji: '❓', reference: 'Proverbs 3:5-6',     verse: 'Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.' },
-  { name: 'Grateful',    emoji: '🌿', reference: 'Psalm 100:4',        verse: 'Enter his gates with thanksgiving, and his courts with praise! Give thanks to him; bless his name!' },
-  { name: 'Peaceful',    emoji: '🕊', reference: 'John 14:27',         verse: 'Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them fear.' },
+  { name: 'Anxious', emoji: '😰', verses: [
+    { reference: 'Philippians 4:6-7', verse: 'Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and minds in Christ Jesus.' },
+    { reference: 'Psalm 56:3', verse: 'When I am afraid, I put my trust in you.' },
+    { reference: '1 Peter 5:7', verse: 'Casting all your anxieties on him, because he cares for you.' },
+  ]},
+  { name: 'Afraid', emoji: '😨', verses: [
+    { reference: 'Isaiah 41:10', verse: 'Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.' },
+    { reference: 'Psalm 23:4', verse: 'Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me; your rod and your staff, they comfort me.' },
+    { reference: '2 Timothy 1:7', verse: 'For God gave us a spirit not of fear but of power and love and self-control.' },
+  ]},
+  { name: 'Overwhelmed', emoji: '🌊', verses: [
+    { reference: 'Matthew 11:28-30', verse: 'Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls. For my yoke is easy, and my burden is light.' },
+    { reference: 'Psalm 61:2', verse: 'From the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I.' },
+    { reference: '2 Corinthians 12:9', verse: 'But he said to me, "My grace is sufficient for you, for my power is made perfect in weakness." Therefore I will boast all the more gladly of my weaknesses, so that the power of Christ may rest upon me.' },
+  ]},
+  { name: 'Sad', emoji: '😢', verses: [
+    { reference: 'Psalm 34:18', verse: 'The Lord is near to the brokenhearted and saves the crushed in spirit.' },
+    { reference: 'Revelation 21:4', verse: 'He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning, nor crying, nor pain anymore, for the former things have passed away.' },
+    { reference: 'Matthew 5:4', verse: 'Blessed are those who mourn, for they shall be comforted.' },
+  ]},
+  { name: 'Angry', emoji: '😤', verses: [
+    { reference: 'James 1:19-20', verse: 'Know this, my beloved brothers: let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God.' },
+    { reference: 'Proverbs 15:1', verse: 'A soft answer turns away wrath, but a harsh word stirs up anger.' },
+    { reference: 'Ephesians 4:26-27', verse: 'Be angry and do not sin; do not let the sun go down on your anger, and give no opportunity to the devil.' },
+  ]},
+  { name: 'Lonely', emoji: '🌙', verses: [
+    { reference: 'Deuteronomy 31:6', verse: 'Be strong and courageous. Do not fear or be in dread of them, for it is the Lord your God who goes with you. He will not leave you or forsake you.' },
+    { reference: 'Psalm 27:10', verse: 'For my father and my mother have forsaken me, but the Lord will take me in.' },
+    { reference: 'Hebrews 13:5', verse: 'He has said, "I will never leave you nor forsake you."' },
+  ]},
+  { name: 'Guilty', emoji: '🪨', verses: [
+    { reference: '1 John 1:9', verse: 'If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.' },
+    { reference: 'Psalm 103:12', verse: 'As far as the east is from the west, so far does he remove our transgressions from us.' },
+    { reference: 'Romans 8:1', verse: 'There is therefore now no condemnation for those who are in Christ Jesus.' },
+  ]},
+  { name: 'Discouraged', emoji: '🍂', verses: [
+    { reference: 'Joshua 1:9', verse: 'Have I not commanded you? Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.' },
+    { reference: 'Galatians 6:9', verse: 'And let us not grow weary of doing good, for in due season we will reap, if we do not give up.' },
+    { reference: 'Psalm 42:11', verse: 'Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God.' },
+  ]},
+  { name: 'Weary', emoji: '😴', verses: [
+    { reference: 'Isaiah 40:31', verse: 'But they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.' },
+    { reference: 'Psalm 23:1-3', verse: 'The Lord is my shepherd; I shall not want. He makes me lie down in green pastures. He leads me beside still waters. He restores my soul.' },
+    { reference: 'Psalm 73:26', verse: 'My flesh and my heart may fail, but God is the strength of my heart and my portion forever.' },
+  ]},
+  { name: 'Doubtful', emoji: '🌫', verses: [
+    { reference: 'Mark 9:24', verse: 'Immediately the father of the child cried out and said, "I believe; help my unbelief!"' },
+    { reference: 'James 1:5-6', verse: 'If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him. But let him ask in faith, with no doubting, for the one who doubts is like a wave of the sea that is driven and tossed by the wind.' },
+    { reference: 'Hebrews 11:1', verse: 'Now faith is the assurance of things hoped for, the conviction of things not seen.' },
+  ]},
+  { name: 'Stressed', emoji: '😬', verses: [
+    { reference: 'Psalm 55:22', verse: 'Cast your burden on the Lord, and he will sustain you; he will never permit the righteous to be moved.' },
+    { reference: 'John 16:33', verse: 'I have said these things to you, that in me you may have peace. In the world you will have tribulation. But take heart; I have overcome the world.' },
+    { reference: 'Psalm 94:19', verse: 'When the cares of my heart are many, your consolations cheer my soul.' },
+  ]},
+  { name: 'Insecure', emoji: '🪞', verses: [
+    { reference: 'Psalm 139:14', verse: 'I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.' },
+    { reference: 'Ephesians 2:10', verse: 'For we are his workmanship, created in Christ Jesus for good works, which God prepared beforehand, that we should walk in them.' },
+    { reference: '1 Samuel 16:7', verse: 'The Lord said to Samuel, "Do not look on his appearance or on the height of his stature, because I have rejected him. For the Lord sees not as man sees: man looks on the outward appearance, but the Lord looks on the heart."' },
+  ]},
+  { name: 'Jealous', emoji: '👁', verses: [
+    { reference: 'James 3:16', verse: 'For where jealousy and selfish ambition exist, there will be disorder and every vile practice.' },
+    { reference: 'Galatians 5:26', verse: 'Let us not become conceited, provoking one another, envying one another.' },
+    { reference: 'Proverbs 14:30', verse: 'A tranquil heart gives life to the flesh, but envy makes the bones rot.' },
+  ]},
+  { name: 'Restless', emoji: '🌀', verses: [
+    { reference: 'Psalm 46:10', verse: 'Be still, and know that I am God. I will be exalted among the nations, I will be exalted in the earth!' },
+    { reference: 'Matthew 6:25-26', verse: 'Do not be anxious about your life, what you will eat or what you will drink, nor about your body, what you will put on. Look at the birds of the air: they neither sow nor reap nor gather into barns, and yet your heavenly Father feeds them. Are you not of more value than they?' },
+    { reference: 'Isaiah 26:3', verse: 'You keep him in perfect peace whose mind is stayed on you, because he trusts in you.' },
+  ]},
+  { name: 'Bitter', emoji: '🍋', verses: [
+    { reference: 'Ephesians 4:31-32', verse: 'Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.' },
+    { reference: 'Colossians 3:13', verse: 'Bearing with one another and, if one has a complaint against another, forgiving each other; as the Lord has forgiven you, so you also must forgive.' },
+    { reference: 'Hebrews 12:15', verse: 'See to it that no one fails to obtain the grace of God; that no "root of bitterness" springs up and causes trouble, and by it many become defiled.' },
+  ]},
+  { name: 'Tempted', emoji: '🪤', verses: [
+    { reference: '1 Corinthians 10:13', verse: 'No temptation has overtaken you that is not common to man. God is faithful, and he will not let you be tempted beyond your ability, but with the temptation he will also provide the way of escape, that you may be able to endure it.' },
+    { reference: 'James 4:7', verse: 'Submit yourselves therefore to God. Resist the devil, and he will flee from you.' },
+    { reference: 'Hebrews 4:15-16', verse: 'For we do not have a high priest who is unable to sympathize with our weaknesses, but one who in every respect has been tempted as we are, yet without sin. Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need.' },
+  ]},
+  { name: 'Hopeless', emoji: '🌑', verses: [
+    { reference: 'Romans 15:13', verse: 'May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.' },
+    { reference: 'Jeremiah 29:11', verse: 'For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope.' },
+    { reference: 'Lamentations 3:22-23', verse: 'The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.' },
+  ]},
+  { name: 'Confused', emoji: '❓', verses: [
+    { reference: 'Proverbs 3:5-6', verse: 'Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.' },
+    { reference: 'James 1:5', verse: 'If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him.' },
+    { reference: 'Isaiah 30:21', verse: 'And your ears shall hear a word behind you, saying, "This is the way, walk in it," when you turn to the right or when you turn to the left.' },
+  ]},
+  { name: 'Grateful', emoji: '🌿', verses: [
+    { reference: 'Psalm 100:4', verse: 'Enter his gates with thanksgiving, and his courts with praise! Give thanks to him; bless his name!' },
+    { reference: '1 Thessalonians 5:18', verse: 'Give thanks in all circumstances; for this is the will of God in Christ Jesus for you.' },
+    { reference: 'Psalm 107:1', verse: 'Oh give thanks to the Lord, for he is good, for his steadfast love endures forever!' },
+  ]},
+  { name: 'Peaceful', emoji: '🕊', verses: [
+    { reference: 'John 14:27', verse: 'Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them fear.' },
+    { reference: 'Psalm 4:8', verse: 'In peace I will both lie down and sleep; for you alone, O Lord, make me dwell in safety.' },
+    { reference: 'Numbers 6:24-26', verse: 'The Lord bless you and keep you; the Lord make his face to shine upon you and be gracious to you; the Lord lift up his countenance upon you and give you peace.' },
+  ]},
 ];
+
+function pickVerse(feeling) {
+  return feeling.verses[Math.floor(Math.random() * feeling.verses.length)];
+}
 
 /* ============ STATE ============ */
 
@@ -516,6 +600,7 @@ function escapeHtml(s) {
 /* ============ VERSE MODAL ============ */
 
 function openVerse(feeling) {
+  const pick = pickVerse(feeling);
   const modal = document.createElement('div');
   modal.className = 'modal';
   modal.innerHTML = `
@@ -524,8 +609,8 @@ function openVerse(feeling) {
       <button class="close" aria-label="Close">×</button>
     </div>
     <div class="modal-body">
-      <div class="verse-text">${escapeHtml(feeling.verse)}</div>
-      <div class="verse-ref">${escapeHtml(feeling.reference)}</div>
+      <div class="verse-text">${escapeHtml(pick.verse)}</div>
+      <div class="verse-ref">${escapeHtml(pick.reference)}</div>
       <textarea class="note-input" placeholder="A note for yourself (optional)" rows="3"></textarea>
     </div>
     <div class="modal-footer">
@@ -545,8 +630,8 @@ function openVerse(feeling) {
         type: 'feeling',
         feeling: feeling.name,
         emoji: feeling.emoji,
-        reference: feeling.reference,
-        verse: feeling.verse,
+        reference: pick.reference,
+        verse: pick.verse,
         note: note || undefined,
         timestamp: Date.now(),
       });
