@@ -97,6 +97,19 @@
   .verse-ref { margin-top: 18px; font-size: 14px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
   .note-input { width: 100%; background: var(--surface); border: 1px solid var(--surface-2); border-radius: 12px; padding: 12px 14px; color: var(--text); font-size: 15px; min-height: 80px; resize: none; margin-top: 28px; }
   .note-input:focus { outline: none; border-color: var(--accent-soft); }
+  .verse-prayer-label { margin-top: 22px; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 500; }
+  .verse-prayer { margin-top: 6px; font-size: 15px; line-height: 1.6; color: var(--text); font-style: italic; opacity: 0.92; }
+  .exercise-btn { width: 100%; background: var(--surface); border: 1px solid var(--surface-2); color: var(--accent); padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .exercise-btn:active { background: var(--surface-2); }
+
+  .exercise-body { padding: 8px 24px 24px; overflow-y: auto; flex: 1; }
+  .exercise-title { font-size: 22px; font-weight: 600; margin: 0 0 8px; color: var(--text); }
+  .exercise-desc { font-size: 14px; color: var(--text-dim); line-height: 1.55; margin: 0 0 24px; }
+  .exercise-steps { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+  .exercise-steps li { padding: 14px 0 14px 44px; border-bottom: 1px solid var(--surface); position: relative; font-size: 15px; line-height: 1.5; }
+  .exercise-steps li:last-child { border-bottom: none; }
+  .exercise-steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 14px; width: 28px; height: 28px; background: var(--accent-soft); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
+
   .modal-footer { padding: 12px 20px 20px; }
   .btn-primary { width: 100%; background: var(--accent); color: var(--bg); padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 600; }
   .btn-primary:active { opacity: 0.85; }
@@ -168,106 +181,146 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 /* ============ DATA ============ */
 
 const FEELINGS = [
-  { name: 'Anxious', emoji: '😰', verses: [
-    { reference: 'Philippians 4:6-7', verse: 'Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and minds in Christ Jesus.' },
-    { reference: 'Psalm 56:3', verse: 'When I am afraid, I put my trust in you.' },
-    { reference: '1 Peter 5:7', verse: 'Casting all your anxieties on him, because he cares for you.' },
-  ]},
-  { name: 'Afraid', emoji: '😨', verses: [
-    { reference: 'Isaiah 41:10', verse: 'Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.' },
-    { reference: 'Psalm 23:4', verse: 'Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me; your rod and your staff, they comfort me.' },
-    { reference: '2 Timothy 1:7', verse: 'For God gave us a spirit not of fear but of power and love and self-control.' },
-  ]},
-  { name: 'Overwhelmed', emoji: '🌊', verses: [
-    { reference: 'Matthew 11:28-30', verse: 'Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls. For my yoke is easy, and my burden is light.' },
-    { reference: 'Psalm 61:2', verse: 'From the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I.' },
-    { reference: '2 Corinthians 12:9', verse: 'But he said to me, "My grace is sufficient for you, for my power is made perfect in weakness." Therefore I will boast all the more gladly of my weaknesses, so that the power of Christ may rest upon me.' },
-  ]},
-  { name: 'Sad', emoji: '😢', verses: [
-    { reference: 'Psalm 34:18', verse: 'The Lord is near to the brokenhearted and saves the crushed in spirit.' },
-    { reference: 'Revelation 21:4', verse: 'He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning, nor crying, nor pain anymore, for the former things have passed away.' },
-    { reference: 'Matthew 5:4', verse: 'Blessed are those who mourn, for they shall be comforted.' },
-  ]},
-  { name: 'Angry', emoji: '😤', verses: [
-    { reference: 'James 1:19-20', verse: 'Know this, my beloved brothers: let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God.' },
-    { reference: 'Proverbs 15:1', verse: 'A soft answer turns away wrath, but a harsh word stirs up anger.' },
-    { reference: 'Ephesians 4:26-27', verse: 'Be angry and do not sin; do not let the sun go down on your anger, and give no opportunity to the devil.' },
-  ]},
-  { name: 'Lonely', emoji: '🌙', verses: [
-    { reference: 'Deuteronomy 31:6', verse: 'Be strong and courageous. Do not fear or be in dread of them, for it is the Lord your God who goes with you. He will not leave you or forsake you.' },
-    { reference: 'Psalm 27:10', verse: 'For my father and my mother have forsaken me, but the Lord will take me in.' },
-    { reference: 'Hebrews 13:5', verse: 'He has said, "I will never leave you nor forsake you."' },
-  ]},
-  { name: 'Guilty', emoji: '🪨', verses: [
-    { reference: '1 John 1:9', verse: 'If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.' },
-    { reference: 'Psalm 103:12', verse: 'As far as the east is from the west, so far does he remove our transgressions from us.' },
-    { reference: 'Romans 8:1', verse: 'There is therefore now no condemnation for those who are in Christ Jesus.' },
-  ]},
-  { name: 'Discouraged', emoji: '🍂', verses: [
-    { reference: 'Joshua 1:9', verse: 'Have I not commanded you? Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.' },
-    { reference: 'Galatians 6:9', verse: 'And let us not grow weary of doing good, for in due season we will reap, if we do not give up.' },
-    { reference: 'Psalm 42:11', verse: 'Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God.' },
-  ]},
-  { name: 'Weary', emoji: '😴', verses: [
-    { reference: 'Isaiah 40:31', verse: 'But they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.' },
-    { reference: 'Psalm 23:1-3', verse: 'The Lord is my shepherd; I shall not want. He makes me lie down in green pastures. He leads me beside still waters. He restores my soul.' },
-    { reference: 'Psalm 73:26', verse: 'My flesh and my heart may fail, but God is the strength of my heart and my portion forever.' },
-  ]},
-  { name: 'Doubtful', emoji: '🌫', verses: [
-    { reference: 'Mark 9:24', verse: 'Immediately the father of the child cried out and said, "I believe; help my unbelief!"' },
-    { reference: 'James 1:5-6', verse: 'If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him. But let him ask in faith, with no doubting, for the one who doubts is like a wave of the sea that is driven and tossed by the wind.' },
-    { reference: 'Hebrews 11:1', verse: 'Now faith is the assurance of things hoped for, the conviction of things not seen.' },
-  ]},
-  { name: 'Stressed', emoji: '😬', verses: [
-    { reference: 'Psalm 55:22', verse: 'Cast your burden on the Lord, and he will sustain you; he will never permit the righteous to be moved.' },
-    { reference: 'John 16:33', verse: 'I have said these things to you, that in me you may have peace. In the world you will have tribulation. But take heart; I have overcome the world.' },
-    { reference: 'Psalm 94:19', verse: 'When the cares of my heart are many, your consolations cheer my soul.' },
-  ]},
-  { name: 'Insecure', emoji: '🪞', verses: [
-    { reference: 'Psalm 139:14', verse: 'I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.' },
-    { reference: 'Ephesians 2:10', verse: 'For we are his workmanship, created in Christ Jesus for good works, which God prepared beforehand, that we should walk in them.' },
-    { reference: '1 Samuel 16:7', verse: 'The Lord said to Samuel, "Do not look on his appearance or on the height of his stature, because I have rejected him. For the Lord sees not as man sees: man looks on the outward appearance, but the Lord looks on the heart."' },
-  ]},
-  { name: 'Jealous', emoji: '👁', verses: [
-    { reference: 'James 3:16', verse: 'For where jealousy and selfish ambition exist, there will be disorder and every vile practice.' },
-    { reference: 'Galatians 5:26', verse: 'Let us not become conceited, provoking one another, envying one another.' },
-    { reference: 'Proverbs 14:30', verse: 'A tranquil heart gives life to the flesh, but envy makes the bones rot.' },
-  ]},
-  { name: 'Restless', emoji: '🌀', verses: [
-    { reference: 'Psalm 46:10', verse: 'Be still, and know that I am God. I will be exalted among the nations, I will be exalted in the earth!' },
-    { reference: 'Matthew 6:25-26', verse: 'Do not be anxious about your life, what you will eat or what you will drink, nor about your body, what you will put on. Look at the birds of the air: they neither sow nor reap nor gather into barns, and yet your heavenly Father feeds them. Are you not of more value than they?' },
-    { reference: 'Isaiah 26:3', verse: 'You keep him in perfect peace whose mind is stayed on you, because he trusts in you.' },
-  ]},
-  { name: 'Bitter', emoji: '🍋', verses: [
-    { reference: 'Ephesians 4:31-32', verse: 'Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.' },
-    { reference: 'Colossians 3:13', verse: 'Bearing with one another and, if one has a complaint against another, forgiving each other; as the Lord has forgiven you, so you also must forgive.' },
-    { reference: 'Hebrews 12:15', verse: 'See to it that no one fails to obtain the grace of God; that no "root of bitterness" springs up and causes trouble, and by it many become defiled.' },
-  ]},
-  { name: 'Tempted', emoji: '🪤', verses: [
-    { reference: '1 Corinthians 10:13', verse: 'No temptation has overtaken you that is not common to man. God is faithful, and he will not let you be tempted beyond your ability, but with the temptation he will also provide the way of escape, that you may be able to endure it.' },
-    { reference: 'James 4:7', verse: 'Submit yourselves therefore to God. Resist the devil, and he will flee from you.' },
-    { reference: 'Hebrews 4:15-16', verse: 'For we do not have a high priest who is unable to sympathize with our weaknesses, but one who in every respect has been tempted as we are, yet without sin. Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need.' },
-  ]},
-  { name: 'Hopeless', emoji: '🌑', verses: [
-    { reference: 'Romans 15:13', verse: 'May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.' },
-    { reference: 'Jeremiah 29:11', verse: 'For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope.' },
-    { reference: 'Lamentations 3:22-23', verse: 'The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.' },
-  ]},
-  { name: 'Confused', emoji: '❓', verses: [
-    { reference: 'Proverbs 3:5-6', verse: 'Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.' },
-    { reference: 'James 1:5', verse: 'If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him.' },
-    { reference: 'Isaiah 30:21', verse: 'And your ears shall hear a word behind you, saying, "This is the way, walk in it," when you turn to the right or when you turn to the left.' },
-  ]},
-  { name: 'Grateful', emoji: '🌿', verses: [
-    { reference: 'Psalm 100:4', verse: 'Enter his gates with thanksgiving, and his courts with praise! Give thanks to him; bless his name!' },
-    { reference: '1 Thessalonians 5:18', verse: 'Give thanks in all circumstances; for this is the will of God in Christ Jesus for you.' },
-    { reference: 'Psalm 107:1', verse: 'Oh give thanks to the Lord, for he is good, for his steadfast love endures forever!' },
-  ]},
-  { name: 'Peaceful', emoji: '🕊', verses: [
-    { reference: 'John 14:27', verse: 'Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them fear.' },
-    { reference: 'Psalm 4:8', verse: 'In peace I will both lie down and sleep; for you alone, O Lord, make me dwell in safety.' },
-    { reference: 'Numbers 6:24-26', verse: 'The Lord bless you and keep you; the Lord make his face to shine upon you and be gracious to you; the Lord lift up his countenance upon you and give you peace.' },
-  ]},
+  { name: 'Anxious', emoji: '😰',
+    exercise: { title: 'Box breathing', description: 'A steady square breath pattern that slows your nervous system. About 2 minutes.', steps: ['Sit upright. Soften your shoulders.', 'Breathe in through your nose for 4 counts.', 'Hold gently for 4 counts.', 'Exhale through your mouth for 4 counts.', 'Hold empty for 4 counts.', 'Repeat 4-6 times, or until the edge softens.'] },
+    verses: [
+      { reference: 'Philippians 4:6-7', verse: 'Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and minds in Christ Jesus.', prayer: 'Father, my mind races with what could go wrong. I bring my fears to you now, with thanks for what is still good. Please guard my heart with the peace only you can give.' },
+      { reference: 'Psalm 56:3', verse: 'When I am afraid, I put my trust in you.', prayer: 'Lord, I am afraid. I name it honestly. And I choose, right now, to put my trust in you. Hold me steady.' },
+      { reference: '1 Peter 5:7', verse: 'Casting all your anxieties on him, because he cares for you.', prayer: 'Father, I have been carrying this anxiety alone. Help me cast it onto you, knowing you care. Receive what I cannot carry.' },
+    ]},
+  { name: 'Afraid', emoji: '😨',
+    exercise: { title: 'Extended exhale', description: 'A long exhale activates the parasympathetic nervous system — the body\'s brake on fear.', steps: ['Place one hand on your belly.', 'Breathe in through your nose for 4 counts.', 'Exhale slowly through pursed lips for 8 counts.', 'Notice your belly fall under your hand.', 'Repeat 5-8 times.'] },
+    verses: [
+      { reference: 'Isaiah 41:10', verse: 'Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.', prayer: 'God, fear feels bigger than me right now. Remind me you are with me. Strengthen what is shaking. Uphold me with your right hand.' },
+      { reference: 'Psalm 23:4', verse: 'Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me; your rod and your staff, they comfort me.', prayer: 'Shepherd, I am walking through a dark valley. I cannot see the way. Walk beside me. Let your presence comfort me when I cannot see the path.' },
+      { reference: '2 Timothy 1:7', verse: 'For God gave us a spirit not of fear but of power and love and self-control.', prayer: 'Father, the spirit you gave me is not a spirit of fear. Replace this fear with power, love, and self-control. Help me remember who you made me to be.' },
+    ]},
+  { name: 'Overwhelmed', emoji: '🌊',
+    exercise: { title: '5-4-3-2-1 grounding', description: 'Brings you out of the swirl and back into your senses. Takes ~2 minutes.', steps: ['Name 5 things you can see.', 'Name 4 things you can hear.', 'Name 3 things you can feel touching your skin.', 'Name 2 things you can smell (or two smells you remember).', 'Name 1 thing you can taste.'] },
+    verses: [
+      { reference: 'Matthew 11:28-30', verse: 'Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls. For my yoke is easy, and my burden is light.', prayer: 'Jesus, I am tired and heavy laden. I come to you. Take this burden. Teach me your gentleness. Give my soul rest.' },
+      { reference: 'Psalm 61:2', verse: 'From the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I.', prayer: 'Father, my heart is faint. From wherever I am, I call to you. Lead me up to the rock that is higher than I — to the steady place I cannot reach on my own.' },
+      { reference: '2 Corinthians 12:9', verse: 'But he said to me, "My grace is sufficient for you, for my power is made perfect in weakness." Therefore I will boast all the more gladly of my weaknesses, so that the power of Christ may rest upon me.', prayer: 'Lord, your grace is sufficient for me. I do not have to be strong right now. Let your power rest on me in this weakness.' },
+    ]},
+  { name: 'Sad', emoji: '😢',
+    exercise: { title: 'Hand on heart', description: 'Skin contact and slow breath signal safety. Allow grief without rushing past it.', steps: ['Place one or both hands on your heart.', 'Feel the warmth and the rise and fall of your chest.', 'Breathe slowly, in through your nose, out through your mouth.', 'Silently say: "This is hard. I am still here."', 'Stay for as long as you need.'] },
+    verses: [
+      { reference: 'Psalm 34:18', verse: 'The Lord is near to the brokenhearted and saves the crushed in spirit.', prayer: 'Lord, my heart is broken. You said you are near to the brokenhearted. Be near to me now. Save what is crushed in my spirit.' },
+      { reference: 'Revelation 21:4', verse: 'He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning, nor crying, nor pain anymore, for the former things have passed away.', prayer: 'Father, the pain feels endless tonight. Help me hold onto the promise that a day is coming when you will wipe every tear. Until then, hold mine.' },
+      { reference: 'Matthew 5:4', verse: 'Blessed are those who mourn, for they shall be comforted.', prayer: 'Jesus, you said the mourners are blessed. I do not feel blessed; I feel broken. Send me comfort that goes deeper than this sorrow.' },
+    ]},
+  { name: 'Angry', emoji: '😤',
+    exercise: { title: 'Push the wall', description: 'Discharges the muscular energy of anger without harm.', steps: ['Stand facing a sturdy wall, hands flat against it at chest height.', 'Press hard for 10 seconds. Feet planted. Breathing out.', 'Release fully. Notice your hands tingling.', 'Repeat 3-5 times.', 'End with one long exhale.'] },
+    verses: [
+      { reference: 'James 1:19-20', verse: 'Know this, my beloved brothers: let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God.', prayer: 'Father, anger is rising in me. Slow me down. Quick to hear. Slow to speak. Slow to anger. Let what I do here come from your righteousness, not mine.' },
+      { reference: 'Proverbs 15:1', verse: 'A soft answer turns away wrath, but a harsh word stirs up anger.', prayer: 'Lord, a sharp answer is on my tongue. Give me a soft one instead. Turn away this wrath in my heart before it does damage.' },
+      { reference: 'Ephesians 4:26-27', verse: 'Be angry and do not sin; do not let the sun go down on your anger, and give no opportunity to the devil.', prayer: 'Father, I am angry, and I do not want to sin in it. Help me set it down before the day ends. Give the devil no foothold in this room of my heart.' },
+    ]},
+  { name: 'Lonely', emoji: '🌙',
+    exercise: { title: 'Butterfly self-hold', description: 'A self-soothing touch that activates a sense of safety and being held.', steps: ['Cross your arms over your chest, hands resting on opposite shoulders.', 'Tap your shoulders alternately, slow and steady — left, right, left, right.', 'Continue for 1-2 minutes.', 'Breathe slowly while tapping.', 'Let yourself feel held, even by yourself.'] },
+    verses: [
+      { reference: 'Deuteronomy 31:6', verse: 'Be strong and courageous. Do not fear or be in dread of them, for it is the Lord your God who goes with you. He will not leave you or forsake you.', prayer: 'Lord, I feel alone. Remind me you are the God who goes with me. You will not leave or forsake me. Be present in this quiet.' },
+      { reference: 'Psalm 27:10', verse: 'For my father and my mother have forsaken me, but the Lord will take me in.', prayer: 'Father, even when those I love feel far from me, you take me in. I am not abandoned. I belong to you. Hold me close.' },
+      { reference: 'Hebrews 13:5', verse: 'He has said, "I will never leave you nor forsake you."', prayer: 'Lord, you promised to never leave or forsake me. I hold onto that promise now. Make your presence felt in this lonely hour.' },
+    ]},
+  { name: 'Guilty', emoji: '🪨',
+    exercise: { title: 'Hand on heart, breath of mercy', description: 'Forgiveness begins in the body. Meet yourself with kindness here.', steps: ['Place a hand on your heart.', 'Breathe in slowly: "I am forgiven."', 'Breathe out slowly: "I release this weight."', 'Repeat for 5-10 breaths.', 'Notice the texture of the air, the feeling of your hand.'] },
+    verses: [
+      { reference: '1 John 1:9', verse: 'If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.', prayer: 'Father, I confess what is weighing on me. You promised to forgive and to cleanse. Receive this confession. Wash me clean.' },
+      { reference: 'Psalm 103:12', verse: 'As far as the east is from the west, so far does he remove our transgressions from us.', prayer: 'Lord, you do not hold my sin against me. As far as east is from west, you have removed it. Help me let go of what you already have.' },
+      { reference: 'Romans 8:1', verse: 'There is therefore now no condemnation for those who are in Christ Jesus.', prayer: 'Jesus, I am in you, and there is no condemnation here. Silence the voice that says otherwise. Let your verdict be the loudest one in my head.' },
+    ]},
+  { name: 'Discouraged', emoji: '🍂',
+    exercise: { title: 'Open chest posture', description: 'Body posture shapes mood. Open your chest, open your spirit.', steps: ['Stand tall, feet hip-width apart.', 'Roll your shoulders back and down.', 'Lift your chin slightly. Look toward the horizon.', 'Breathe in, expanding your chest fully.', 'Stay here for 2 minutes, breathing slowly.'] },
+    verses: [
+      { reference: 'Joshua 1:9', verse: 'Have I not commanded you? Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.', prayer: 'Father, you commanded me to be strong and courageous, not because I am, but because you are with me. Wherever I am right now, you are too. Let that be enough.' },
+      { reference: 'Galatians 6:9', verse: 'And let us not grow weary of doing good, for in due season we will reap, if we do not give up.', prayer: 'Lord, I am weary of doing good with nothing to show. Help me not give up. Trust that the harvest comes — even if I cannot see it yet.' },
+      { reference: 'Psalm 42:11', verse: 'Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God.', prayer: 'Father, my soul is cast down. I ask it the question: why? And I answer with the truth — hope in God. I will praise you again.' },
+    ]},
+  { name: 'Weary', emoji: '😴',
+    exercise: { title: 'Body scan and stretch', description: 'Wake the body gently. Find where tiredness sits. Give it air.', steps: ['Stand or sit comfortably.', 'Stretch your arms overhead, fingers wide.', 'Yawn if it comes — let it.', 'Slowly notice each part of your body from head to feet.', 'Where you find tension, breathe into it and soften.'] },
+    verses: [
+      { reference: 'Isaiah 40:31', verse: 'But they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.', prayer: 'Lord, I have run out of strength. I wait for you. Renew me. Lift me up on wings. Let me walk and not faint.' },
+      { reference: 'Psalm 23:1-3', verse: 'The Lord is my shepherd; I shall not want. He makes me lie down in green pastures. He leads me beside still waters. He restores my soul.', prayer: 'Shepherd, lead me to green pastures. Lay me down beside still waters. My soul needs restoring. I trust you to do it.' },
+      { reference: 'Psalm 73:26', verse: 'My flesh and my heart may fail, but God is the strength of my heart and my portion forever.', prayer: 'Father, my flesh and my heart are failing. You are my strength when mine is gone. Be my portion today.' },
+    ]},
+  { name: 'Doubtful', emoji: '🌫',
+    exercise: { title: 'Feet on the ground', description: 'Faith starts with feeling solid in your own body.', steps: ['Plant both feet flat on the floor.', 'Press down through your heels, then the balls of your feet.', 'Feel the weight of your body resting through your legs.', 'Breathe slowly. Say silently: "I am here. The ground is here."', 'Stay for 1-2 minutes.'] },
+    verses: [
+      { reference: 'Mark 9:24', verse: 'Immediately the father of the child cried out and said, "I believe; help my unbelief!"', prayer: 'Lord, I believe — and I do not believe. Help my unbelief. Meet me in the middle of this doubt and lead me back.' },
+      { reference: 'James 1:5-6', verse: 'If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him. But let him ask in faith, with no doubting, for the one who doubts is like a wave of the sea that is driven and tossed by the wind.', prayer: 'Father, I lack wisdom. You promised to give it generously. I ask now, in faith. Steady me against the wind that wants to toss me.' },
+      { reference: 'Hebrews 11:1', verse: 'Now faith is the assurance of things hoped for, the conviction of things not seen.', prayer: 'Lord, I cannot see clearly. Give me faith — the assurance of what I hope for, the conviction of what I cannot see. Help me trust without sight.' },
+    ]},
+  { name: 'Stressed', emoji: '😬',
+    exercise: { title: 'Long exhale breathing', description: 'Stress dissolves on the exhale. Make the out-breath longer than the in-breath.', steps: ['Sit or stand comfortably.', 'Breathe in through your nose for 4 counts.', 'Exhale slowly through pursed lips for 6-8 counts.', 'Imagine releasing tension with each out-breath.', 'Repeat 6-10 times.'] },
+    verses: [
+      { reference: 'Psalm 55:22', verse: 'Cast your burden on the Lord, and he will sustain you; he will never permit the righteous to be moved.', prayer: 'Father, I am carrying too much. I cast it onto you now. Sustain me. Keep me from being moved by this storm.' },
+      { reference: 'John 16:33', verse: 'I have said these things to you, that in me you may have peace. In the world you will have tribulation. But take heart; I have overcome the world.', prayer: 'Jesus, you said in this world I will have trouble. I am in trouble now. Remind me you have overcome the world. Let your peace settle in me.' },
+      { reference: 'Psalm 94:19', verse: 'When the cares of my heart are many, your consolations cheer my soul.', prayer: 'Lord, the cares of my heart are many. Let your consolations cheer my soul. Replace this anxious load with your comfort.' },
+    ]},
+  { name: 'Insecure', emoji: '🪞',
+    exercise: { title: 'Hands on heart and belly', description: 'Reconnect with the body that has always belonged to you.', steps: ['Place one hand on your heart, one on your belly.', 'Close your eyes if it feels safe.', 'Breathe slowly. Feel the rise and fall under both hands.', 'Silently say: "I am made well. I am enough."', 'Stay for 2 minutes.'] },
+    verses: [
+      { reference: 'Psalm 139:14', verse: 'I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.', prayer: 'Father, I am fearfully and wonderfully made. Help me believe what you say about me, not what shame tells me. Your works are wonderful — including me.' },
+      { reference: 'Ephesians 2:10', verse: 'For we are his workmanship, created in Christ Jesus for good works, which God prepared beforehand, that we should walk in them.', prayer: 'Lord, I am your workmanship. You prepared good for me to do. Help me walk in it today, with confidence in your handiwork.' },
+      { reference: '1 Samuel 16:7', verse: 'The Lord said to Samuel, "Do not look on his appearance or on the height of his stature, because I have rejected him. For the Lord sees not as man sees: man looks on the outward appearance, but the Lord looks on the heart."', prayer: 'Father, others see the outside. You see my heart. Let your seeing of me be the thing that defines me.' },
+    ]},
+  { name: 'Jealous', emoji: '👁',
+    exercise: { title: 'Shake it out', description: 'Animals shake off stress in seconds. So can you.', steps: ['Stand with feet hip-width apart.', 'Begin to gently bounce your knees, letting your arms shake.', 'Shake your hands, shoulders, hips, head.', 'Go for 30-60 seconds. Let it be loose and silly.', 'Stop. Stand still. Breathe.'] },
+    verses: [
+      { reference: 'James 3:16', verse: 'For where jealousy and selfish ambition exist, there will be disorder and every vile practice.', prayer: 'Lord, jealousy is poisoning me. Where it has caused disorder in my heart, bring order. Forgive me. Replace this with peace.' },
+      { reference: 'Galatians 5:26', verse: 'Let us not become conceited, provoking one another, envying one another.', prayer: 'Father, keep me from conceit and envy. Help me celebrate what you are doing in others without comparing it to my own life.' },
+      { reference: 'Proverbs 14:30', verse: 'A tranquil heart gives life to the flesh, but envy makes the bones rot.', prayer: 'Lord, give me a tranquil heart. This envy is rotting me from the inside. Replace it with contentment in what you have given me.' },
+    ]},
+  { name: 'Restless', emoji: '🌀',
+    exercise: { title: 'Slow walking', description: 'Restlessness wants movement. Give it a slow, intentional shape.', steps: ['Find a stretch where you can walk 10-20 steps.', 'Walk much slower than usual — feel each foot lift and land.', 'Breathe in step with your walking.', 'Notice when your mind wanders. Gently come back.', 'Continue for 3-5 minutes.'] },
+    verses: [
+      { reference: 'Psalm 46:10', verse: 'Be still, and know that I am God. I will be exalted among the nations, I will be exalted in the earth!', prayer: 'Father, I cannot be still. Teach me. Quiet the noise. Let me know — in body and spirit — that you are God.' },
+      { reference: 'Matthew 6:25-26', verse: 'Do not be anxious about your life, what you will eat or what you will drink, nor about your body, what you will put on. Look at the birds of the air: they neither sow nor reap nor gather into barns, and yet your heavenly Father feeds them. Are you not of more value than they?', prayer: 'Lord, you feed the birds. You will feed me too. Help me stop scanning for danger. Let me look up and see how cared for I am.' },
+      { reference: 'Isaiah 26:3', verse: 'You keep him in perfect peace whose mind is stayed on you, because he trusts in you.', prayer: 'Father, you keep in perfect peace those whose minds are stayed on you. Anchor my mind to you. Let your peace settle the spin in me.' },
+    ]},
+  { name: 'Bitter', emoji: '🍋',
+    exercise: { title: 'Humming', description: 'Vibration in the throat soothes the vagus nerve. Hard to stay bitter while humming.', steps: ['Take a slow breath in.', 'On the exhale, hum a low, comfortable note.', 'Feel the buzz in your chest, throat, and lips.', 'Repeat for 5-10 breaths.', 'Let the tone be uneven — it does not need to be a song.'] },
+    verses: [
+      { reference: 'Ephesians 4:31-32', verse: 'Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.', prayer: 'Lord, bitterness is taking root in me. Help me put it away. Make me tender. Help me forgive — because you forgave me first.' },
+      { reference: 'Colossians 3:13', verse: 'Bearing with one another and, if one has a complaint against another, forgiving each other; as the Lord has forgiven you, so you also must forgive.', prayer: 'Father, I have a complaint in my heart. Help me forgive as you forgave me. Take the heat out of this grievance.' },
+      { reference: 'Hebrews 12:15', verse: 'See to it that no one fails to obtain the grace of God; that no "root of bitterness" springs up and causes trouble, and by it many become defiled.', prayer: 'Lord, do not let a root of bitterness spring up in me. Pull it out now, while it is small. Keep me drinking from your grace, not my hurt.' },
+    ]},
+  { name: 'Tempted', emoji: '🪤',
+    exercise: { title: 'Cold water reset', description: 'Cold on the face triggers a dive reflex that calms the nervous system fast.', steps: ['Go to a sink.', 'Run the coldest water you can.', 'Splash it on your face, especially around your eyes.', 'Hold a cold wet cloth on your face for 30 seconds.', 'Breathe slowly. The urge is moving through you, not staying.'] },
+    verses: [
+      { reference: '1 Corinthians 10:13', verse: 'No temptation has overtaken you that is not common to man. God is faithful, and he will not let you be tempted beyond your ability, but with the temptation he will also provide the way of escape, that you may be able to endure it.', prayer: 'Father, the pull is strong. Remind me this is not unique to me, and you are faithful. Show me the way of escape. Help me take it.' },
+      { reference: 'James 4:7', verse: 'Submit yourselves therefore to God. Resist the devil, and he will flee from you.', prayer: 'Lord, I submit myself to you. I resist this temptation in your name. Make it flee. Stand near to me right now.' },
+      { reference: 'Hebrews 4:15-16', verse: 'For we do not have a high priest who is unable to sympathize with our weaknesses, but one who in every respect has been tempted as we are, yet without sin. Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need.', prayer: 'Jesus, you were tempted as I am, yet without sin. You understand. I come to your throne of grace today — for mercy, for help, for strength to walk away.' },
+    ]},
+  { name: 'Hopeless', emoji: '🌑',
+    exercise: { title: 'Bilateral butterfly tap', description: 'Cross-body tapping helps integrate emotion and quiet distress.', steps: ['Cross your arms over your chest, hands on opposite shoulders.', 'Tap left, right, left, right — slow, like a heartbeat.', 'Continue for 1-2 minutes.', 'Breathe slowly.', 'Let any thought come and go, without holding onto it.'] },
+    verses: [
+      { reference: 'Romans 15:13', verse: 'May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.', prayer: 'God of hope, fill me. There is none in me. Pour joy and peace into the empty places, and by your Spirit let me abound in hope again.' },
+      { reference: 'Jeremiah 29:11', verse: 'For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope.', prayer: 'Father, when I cannot see a future, you can. Your plans for me are for welfare. Let this hope hold me when nothing else can.' },
+      { reference: 'Lamentations 3:22-23', verse: 'The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.', prayer: 'Lord, your mercies are new this morning. I do not have to live on yesterday\'s strength. Give me what I need for today.' },
+    ]},
+  { name: 'Confused', emoji: '❓',
+    exercise: { title: 'Walk and name', description: 'Naming what you see in your environment grounds the mind in concrete reality.', steps: ['Stand up and walk slowly around your space.', 'Out loud or silently, name what you see: "chair, lamp, window..."', 'Stay simple. Single words. No judgment.', 'Continue for 2 minutes.', 'Return to stillness when ready.'] },
+    verses: [
+      { reference: 'Proverbs 3:5-6', verse: 'Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.', prayer: 'Father, my understanding is failing me. I trust you with all my heart. I acknowledge you in this. Make my path straight, even when I cannot see it.' },
+      { reference: 'James 1:5', verse: 'If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him.', prayer: 'Lord, I lack wisdom in this. You give generously. I ask now. Show me the next step.' },
+      { reference: 'Isaiah 30:21', verse: 'And your ears shall hear a word behind you, saying, "This is the way, walk in it," when you turn to the right or when you turn to the left.', prayer: 'Father, speak the word behind me — "This is the way." Let me hear your voice over the noise. Guide my turning.' },
+    ]},
+  { name: 'Grateful', emoji: '🌿',
+    exercise: { title: 'Heart-centered breathing', description: 'Gratitude lives in the chest. Breathe into it and let it grow.', steps: ['Place a hand over your heart.', 'Bring to mind one thing you are grateful for.', 'Breathe in slowly, imagining the breath entering through your heart.', 'Exhale, letting warmth spread.', 'Continue for 1-2 minutes.'] },
+    verses: [
+      { reference: 'Psalm 100:4', verse: 'Enter his gates with thanksgiving, and his courts with praise! Give thanks to him; bless his name!', prayer: 'Father, I enter your gates with thanksgiving today. Thank you. Thank you. Thank you. Receive my praise.' },
+      { reference: '1 Thessalonians 5:18', verse: 'Give thanks in all circumstances; for this is the will of God in Christ Jesus for you.', prayer: 'Lord, in every circumstance, you call me to thanks. Even here. Especially here. Thank you for what is, and for what you are doing.' },
+      { reference: 'Psalm 107:1', verse: 'Oh give thanks to the Lord, for he is good, for his steadfast love endures forever!', prayer: 'Father, you are good. Your steadfast love endures forever. Today I add my voice to the long line of those who give you thanks.' },
+    ]},
+  { name: 'Peaceful', emoji: '🕊',
+    exercise: { title: 'Body scan rest', description: 'Settle deeper into the peace already here. No work. Just notice.', steps: ['Sit or lie down comfortably.', 'Slowly move your attention from head to feet.', 'At each part, simply notice — temperature, weight, sensation.', 'There is nothing to fix.', 'Stay as long as you like.'] },
+    verses: [
+      { reference: 'John 14:27', verse: 'Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them fear.', prayer: 'Jesus, you give peace not as the world gives. Yours stays. Settle this peace deep in me. Let my heart not be troubled.' },
+      { reference: 'Psalm 4:8', verse: 'In peace I will both lie down and sleep; for you alone, O Lord, make me dwell in safety.', prayer: 'Lord, I will lie down and sleep in peace, because you make me dwell in safety. Tonight is yours. Take it.' },
+      { reference: 'Numbers 6:24-26', verse: 'The Lord bless you and keep you; the Lord make his face to shine upon you and be gracious to you; the Lord lift up his countenance upon you and give you peace.', prayer: 'Father, bless me and keep me. Shine your face on me. Be gracious to me. Lift up your countenance upon me, and give me your peace.' },
+    ]},
 ];
 
 function pickVerse(feeling) {
@@ -611,6 +664,9 @@ function openVerse(feeling) {
     <div class="modal-body">
       <div class="verse-text">${escapeHtml(pick.verse)}</div>
       <div class="verse-ref">${escapeHtml(pick.reference)}</div>
+      <div class="verse-prayer-label">Prayer</div>
+      <div class="verse-prayer">${escapeHtml(pick.prayer)}</div>
+      <button class="exercise-btn" id="exerciseBtn">🌿 Try a body exercise</button>
       <textarea class="note-input" placeholder="A note for yourself (optional)" rows="3"></textarea>
     </div>
     <div class="modal-footer">
@@ -620,6 +676,7 @@ function openVerse(feeling) {
   document.body.appendChild(modal);
   const close = () => modal.remove();
   modal.querySelector('.close').addEventListener('click', close);
+  modal.querySelector('#exerciseBtn').addEventListener('click', () => openExercise(feeling));
   const saveBtn = modal.querySelector('#modalSave');
   saveBtn.addEventListener('click', async () => {
     const note = modal.querySelector('.note-input').value.trim();
@@ -644,6 +701,29 @@ function openVerse(feeling) {
       saveBtn.textContent = 'Save & ground';
     }
   });
+}
+
+/* ============ EXERCISE MODAL ============ */
+
+function openExercise(feeling) {
+  const ex = feeling.exercise;
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-header">
+      <span class="feeling-label">Body exercise</span>
+      <button class="close" aria-label="Close">×</button>
+    </div>
+    <div class="exercise-body">
+      <h2 class="exercise-title">${escapeHtml(ex.title)}</h2>
+      <p class="exercise-desc">${escapeHtml(ex.description)}</p>
+      <ol class="exercise-steps">
+        ${ex.steps.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}
+      </ol>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector('.close').addEventListener('click', () => modal.remove());
 }
 
 /* ============ SETTINGS SHEET ============ */

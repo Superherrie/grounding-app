@@ -1,4 +1,4 @@
-const CACHE = 'grounding-v5';
+const CACHE = 'grounding-v6';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', (e) => {
