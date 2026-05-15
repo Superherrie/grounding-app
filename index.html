@@ -574,7 +574,9 @@ function renderHome() {
   `;
   document.getElementById('exploreCard').addEventListener('click', openExplorer);
   const grid = document.getElementById('feelingGrid');
-  FEELINGS.forEach((f) => {
+  const POSITIVE = new Set(['Grateful', 'Peaceful', 'Confident', 'Joyful', 'Loved']);
+  const orderedFeelings = [...FEELINGS].sort((a, b) => (POSITIVE.has(a.name) ? 1 : 0) - (POSITIVE.has(b.name) ? 1 : 0));
+  orderedFeelings.forEach((f) => {
     const btn = document.createElement('button');
     btn.className = 'feeling-btn';
     btn.innerHTML = `<span class="emoji">${f.emoji}</span><span class="name">${f.name}</span>`;
