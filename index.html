@@ -874,7 +874,13 @@ async function openExplorer() {
     const crumbs = ['<button data-i="-1">Feelings</button>']
       .concat(path.map((n, i) => `<span class="sep">›</span><button data-i="${i}">${escapeHtml(n.name)}</button>`))
       .join('');
-    const opts = optionsAt()
+    const CORE_ORDER = ['ashamed', 'proud', 'sad', 'joyful', 'surprised', 'intrigued', 'afraid', 'trusting', 'disgusted', 'loving', 'angry', 'peaceful'];
+    let nodes = optionsAt();
+    if (path.length === 0) {
+      nodes = CORE_ORDER.map((id) => nodes.find((n) => n.id === id)).filter(Boolean)
+        .concat(nodes.filter((n) => CORE_ORDER.indexOf(n.id) === -1));
+    }
+    const opts = nodes
       .map((n, i) => `<button class="explore-opt" data-opt="${i}">${escapeHtml(n.name)}</button>`)
       .join('');
     body.innerHTML = `
@@ -884,7 +890,7 @@ async function openExplorer() {
       ${path.length > 0 ? '<button class="explore-back" id="exploreBack">← Back a step</button>' : ''}
     `;
     body.querySelectorAll('[data-opt]').forEach((b) => {
-      b.addEventListener('click', () => { path.push(optionsAt()[Number(b.dataset.opt)]); renderLevel(); });
+      b.addEventListener('click', () => { path.push(nodes[Number(b.dataset.opt)]); renderLevel(); });
     });
     body.querySelectorAll('.explore-crumbs button').forEach((b) => {
       b.addEventListener('click', () => { path = path.slice(0, Number(b.dataset.i) + 1); renderLevel(); });
