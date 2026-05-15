@@ -1,5 +1,5 @@
-const CACHE = 'grounding-v6';
-const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
+const CACHE = 'grounding-v7';
+const ASSETS = ['./', './index.html', './manifest.json', './icon.svg', './icon-192.png', './icon-512.png', './icon-512-maskable.png', './icon-180.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
