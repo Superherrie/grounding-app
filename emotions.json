@@ -1,0 +1,564 @@
+{
+  "schema": {
+    "levels": ["core", "secondary", "tertiary"],
+    "groups": {
+      "needs_met": "Feelings when your needs are met",
+      "needs_not_met": "Feelings when your needs are not met"
+    },
+    "notes": "Hierarchy extracted from the Feelings Wheel. Each emotion has: id, name, level, and (on core nodes) descriptor + group + color. Drill down via the 'children' array."
+  },
+  "emotions": [
+    {
+      "id": "angry",
+      "name": "Angry",
+      "descriptor": "regulation",
+      "level": "core",
+      "group": "needs_not_met",
+      "color": "red",
+      "children": [
+        {
+          "id": "angry.mad",
+          "name": "Mad",
+          "level": "secondary",
+          "children": [
+            { "id": "angry.mad.furious", "name": "Furious", "level": "tertiary" },
+            { "id": "angry.mad.enraged", "name": "Enraged", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "angry.envious",
+          "name": "Envious",
+          "level": "secondary",
+          "children": [
+            { "id": "angry.envious.jealous", "name": "Jealous", "level": "tertiary" },
+            { "id": "angry.envious.animosity", "name": "Animosity", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "angry.annoyed",
+          "name": "Annoyed",
+          "level": "secondary",
+          "children": [
+            { "id": "angry.annoyed.irritated", "name": "Irritated", "level": "tertiary" },
+            { "id": "angry.annoyed.resentful", "name": "Resentful", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "angry.frustrated",
+          "name": "Frustrated",
+          "level": "secondary",
+          "children": [
+            { "id": "angry.frustrated.upset", "name": "Upset", "level": "tertiary" },
+            { "id": "angry.frustrated.aggravated", "name": "Aggravated", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proud",
+      "name": "Proud",
+      "descriptor": "self-acceptance",
+      "level": "core",
+      "group": "needs_met",
+      "color": "orange",
+      "children": [
+        {
+          "id": "proud.self_confident",
+          "name": "Self-Confident",
+          "level": "secondary",
+          "children": [
+            { "id": "proud.self_confident.poised", "name": "Poised", "level": "tertiary" },
+            { "id": "proud.self_confident.self_assured", "name": "Self-Assured", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "proud.self_esteem",
+          "name": "Self-Esteem",
+          "level": "secondary",
+          "children": [
+            { "id": "proud.self_esteem.fulfilled", "name": "Fulfilled", "level": "tertiary" },
+            { "id": "proud.self_esteem.pleased", "name": "Pleased", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "proud.encouraged",
+          "name": "Encouraged",
+          "level": "secondary",
+          "children": [
+            { "id": "proud.encouraged.brave", "name": "Brave", "level": "tertiary" },
+            { "id": "proud.encouraged.courageous", "name": "Courageous", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "proud.powerful",
+          "name": "Powerful",
+          "level": "secondary",
+          "children": [
+            { "id": "proud.powerful.empowered", "name": "Empowered", "level": "tertiary" },
+            { "id": "proud.powerful.effectual", "name": "Effectual", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "joyful",
+      "name": "Joyful",
+      "descriptor": "gain",
+      "level": "core",
+      "group": "needs_met",
+      "color": "yellow",
+      "children": [
+        {
+          "id": "joyful.happy",
+          "name": "Happy",
+          "level": "secondary",
+          "children": [
+            { "id": "joyful.happy.delighted", "name": "Delighted", "level": "tertiary" },
+            { "id": "joyful.happy.glad_pleased", "name": "Glad-Pleased", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "joyful.ecstatic",
+          "name": "Ecstatic",
+          "level": "secondary",
+          "children": [
+            { "id": "joyful.ecstatic.elated", "name": "Elated", "level": "tertiary" },
+            { "id": "joyful.ecstatic.thrilled", "name": "Thrilled", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "joyful.excited",
+          "name": "Excited",
+          "level": "secondary",
+          "children": [
+            { "id": "joyful.excited.enthusiastic", "name": "Enthusiastic", "level": "tertiary" },
+            { "id": "joyful.excited.passionate", "name": "Passionate", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "joyful.grateful",
+          "name": "Grateful",
+          "level": "secondary",
+          "children": [
+            { "id": "joyful.grateful.appreciation", "name": "Appreciation", "level": "tertiary" },
+            { "id": "joyful.grateful.thankful", "name": "Thankful", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intrigued",
+      "name": "Intrigued",
+      "descriptor": "attentive",
+      "level": "core",
+      "group": "needs_met",
+      "color": "light_green",
+      "children": [
+        {
+          "id": "intrigued.engaged",
+          "name": "Engaged",
+          "level": "secondary",
+          "children": [
+            { "id": "intrigued.engaged.absorbed", "name": "Absorbed", "level": "tertiary" },
+            { "id": "intrigued.engaged.engrossed", "name": "Engrossed", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "intrigued.fascinated",
+          "name": "Fascinated",
+          "level": "secondary",
+          "children": [
+            { "id": "intrigued.fascinated.interested", "name": "Interested", "level": "tertiary" },
+            { "id": "intrigued.fascinated.curious", "name": "Curious", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "intrigued.entranced",
+          "name": "Entranced",
+          "level": "secondary",
+          "children": [
+            { "id": "intrigued.entranced.captivated", "name": "Captivated", "level": "tertiary" },
+            { "id": "intrigued.entranced.mesmerized", "name": "Mesmerized", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "intrigued.energetic",
+          "name": "Energetic",
+          "level": "secondary",
+          "children": [
+            { "id": "intrigued.energetic.animated", "name": "Animated", "level": "tertiary" },
+            { "id": "intrigued.energetic.refreshed", "name": "Refreshed", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trusting",
+      "name": "Trusting",
+      "descriptor": "security",
+      "level": "core",
+      "group": "needs_met",
+      "color": "blue",
+      "children": [
+        {
+          "id": "trusting.assured",
+          "name": "Assured",
+          "level": "secondary",
+          "children": [
+            { "id": "trusting.assured.positive", "name": "Positive", "level": "tertiary" },
+            { "id": "trusting.assured.relieved", "name": "Relieved", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "trusting.hopeful",
+          "name": "Hopeful",
+          "level": "secondary",
+          "children": [
+            { "id": "trusting.hopeful.optimistic", "name": "Optimistic", "level": "tertiary" },
+            { "id": "trusting.hopeful.expectant", "name": "Expectant", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "trusting.secure",
+          "name": "Secure",
+          "level": "secondary",
+          "children": [
+            { "id": "trusting.secure.safe", "name": "Safe", "level": "tertiary" },
+            { "id": "trusting.secure.comforted", "name": "Comforted", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "trusting.confident",
+          "name": "Confident",
+          "level": "secondary",
+          "children": [
+            { "id": "trusting.confident.certain", "name": "Certain", "level": "tertiary" },
+            { "id": "trusting.confident.convinced", "name": "Convinced", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loving",
+      "name": "Loving",
+      "descriptor": "attraction",
+      "level": "core",
+      "group": "needs_met",
+      "color": "purple",
+      "children": [
+        {
+          "id": "loving.affectionate",
+          "name": "Affectionate",
+          "level": "secondary",
+          "children": [
+            { "id": "loving.affectionate.friendly", "name": "Friendly", "level": "tertiary" },
+            { "id": "loving.affectionate.fondness", "name": "Fondness", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "loving.adoration",
+          "name": "Adoration",
+          "level": "secondary",
+          "children": [
+            { "id": "loving.adoration.admiration", "name": "Admiration", "level": "tertiary" },
+            { "id": "loving.adoration.reverence", "name": "Reverence", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "loving.connected",
+          "name": "Connected",
+          "level": "secondary",
+          "children": [
+            { "id": "loving.connected.close", "name": "Close", "level": "tertiary" },
+            { "id": "loving.connected.intimate", "name": "Intimate", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "loving.caring",
+          "name": "Caring",
+          "level": "secondary",
+          "children": [
+            { "id": "loving.caring.compassionate", "name": "Compassionate", "level": "tertiary" },
+            { "id": "loving.caring.tenderness", "name": "Tenderness", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "peaceful",
+      "name": "Peaceful",
+      "descriptor": "acceptance",
+      "level": "core",
+      "group": "needs_met",
+      "color": "red",
+      "children": [
+        {
+          "id": "peaceful.relaxed",
+          "name": "Relaxed",
+          "level": "secondary",
+          "children": [
+            { "id": "peaceful.relaxed.satisfied", "name": "Satisfied", "level": "tertiary" },
+            { "id": "peaceful.relaxed.comfortable", "name": "Comfortable", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "peaceful.content",
+          "name": "Content",
+          "level": "secondary",
+          "children": [
+            { "id": "peaceful.content.serene", "name": "Serene", "level": "tertiary" },
+            { "id": "peaceful.content.calm", "name": "Calm", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "peaceful.tranquil",
+          "name": "Tranquil",
+          "level": "secondary",
+          "children": [
+            { "id": "peaceful.tranquil.quiet", "name": "Quiet", "level": "tertiary" },
+            { "id": "peaceful.tranquil.centered", "name": "Centered", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "peaceful.harmonious",
+          "name": "Harmonious",
+          "level": "secondary",
+          "children": [
+            { "id": "peaceful.harmonious.congruous", "name": "Congruous", "level": "tertiary" },
+            { "id": "peaceful.harmonious.balanced", "name": "Balanced", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ashamed",
+      "name": "Ashamed",
+      "descriptor": "self-rejection",
+      "level": "core",
+      "group": "needs_not_met",
+      "color": "orange",
+      "children": [
+        {
+          "id": "ashamed.humiliation",
+          "name": "Humiliation",
+          "level": "secondary",
+          "children": [
+            { "id": "ashamed.humiliation.chagrined", "name": "Chagrined", "level": "tertiary" },
+            { "id": "ashamed.humiliation.flustered", "name": "Flustered", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "ashamed.embarrassed",
+          "name": "Embarrassed",
+          "level": "secondary",
+          "children": [
+            { "id": "ashamed.embarrassed.mortified", "name": "Mortified", "level": "tertiary" },
+            { "id": "ashamed.embarrassed.horrified", "name": "Horrified", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "ashamed.guilty",
+          "name": "Guilty",
+          "level": "secondary",
+          "children": [
+            { "id": "ashamed.guilty.regretful", "name": "Regretful", "level": "tertiary" },
+            { "id": "ashamed.guilty.remorseful", "name": "Remorseful", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "ashamed.awkward",
+          "name": "Awkward",
+          "level": "secondary",
+          "children": [
+            { "id": "ashamed.awkward.self_conscious", "name": "Self-conscious", "level": "tertiary" },
+            { "id": "ashamed.awkward.uncomfortable", "name": "Uncomfortable", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sad",
+      "name": "Sad",
+      "descriptor": "loss",
+      "level": "core",
+      "group": "needs_not_met",
+      "color": "yellow",
+      "children": [
+        {
+          "id": "sad.unhappy",
+          "name": "Unhappy",
+          "level": "secondary",
+          "children": [
+            { "id": "sad.unhappy.disappointed", "name": "Disappointed", "level": "tertiary" },
+            { "id": "sad.unhappy.discouraged", "name": "Discouraged", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "sad.grief_sorrow",
+          "name": "Grief & Sorrow",
+          "level": "secondary",
+          "children": [
+            { "id": "sad.grief_sorrow.devastated", "name": "Devastated", "level": "tertiary" },
+            { "id": "sad.grief_sorrow.heartbroken", "name": "Heartbroken", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "sad.pain_hurt",
+          "name": "Pain & Hurt",
+          "level": "secondary",
+          "children": [
+            { "id": "sad.pain_hurt.despair", "name": "Despair", "level": "tertiary" },
+            { "id": "sad.pain_hurt.miserable", "name": "Miserable", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "sad.depressed",
+          "name": "Depressed",
+          "level": "secondary",
+          "children": [
+            { "id": "sad.depressed.fatigued_tired", "name": "Fatigued/Tired", "level": "tertiary" },
+            { "id": "sad.depressed.hopeless", "name": "Hopeless", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "surprised",
+      "name": "Surprised",
+      "descriptor": "caught off guard",
+      "level": "core",
+      "group": "needs_not_met",
+      "color": "green",
+      "children": [
+        {
+          "id": "surprised.overwhelmed",
+          "name": "Overwhelmed",
+          "level": "secondary",
+          "children": [
+            { "id": "surprised.overwhelmed.puzzled", "name": "Puzzled", "level": "tertiary" },
+            { "id": "surprised.overwhelmed.confused", "name": "Confused", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "surprised.startled",
+          "name": "Startled",
+          "level": "secondary",
+          "children": [
+            { "id": "surprised.startled.stressed", "name": "Stressed", "level": "tertiary" },
+            { "id": "surprised.startled.stunned", "name": "Stunned", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "surprised.distracted",
+          "name": "Distracted",
+          "level": "secondary",
+          "children": [
+            { "id": "surprised.distracted.hesitant", "name": "Hesitant", "level": "tertiary" },
+            { "id": "surprised.distracted.preoccupied", "name": "Preoccupied", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "surprised.astonished",
+          "name": "Astonished",
+          "level": "secondary",
+          "children": [
+            { "id": "surprised.astonished.amazed", "name": "Amazed", "level": "tertiary" },
+            { "id": "surprised.astonished.shocked", "name": "Shocked", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "afraid",
+      "name": "Afraid",
+      "descriptor": "threatened",
+      "level": "core",
+      "group": "needs_not_met",
+      "color": "blue",
+      "children": [
+        {
+          "id": "afraid.scared",
+          "name": "Scared",
+          "level": "secondary",
+          "children": [
+            { "id": "afraid.scared.terrified", "name": "Terrified", "level": "tertiary" },
+            { "id": "afraid.scared.frightened", "name": "Frightened", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "afraid.vulnerable",
+          "name": "Vulnerable",
+          "level": "secondary",
+          "children": [
+            { "id": "afraid.vulnerable.susceptible", "name": "Susceptible", "level": "tertiary" },
+            { "id": "afraid.vulnerable.helpless", "name": "Helpless", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "afraid.anxious",
+          "name": "Anxious",
+          "level": "secondary",
+          "children": [
+            { "id": "afraid.anxious.worried", "name": "Worried", "level": "tertiary" },
+            { "id": "afraid.anxious.concerned", "name": "Concerned", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "afraid.insecure",
+          "name": "Insecure",
+          "level": "secondary",
+          "children": [
+            { "id": "afraid.insecure.apprehensive", "name": "Apprehensive", "level": "tertiary" },
+            { "id": "afraid.insecure.suspicious", "name": "Suspicious", "level": "tertiary" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disgusted",
+      "name": "Disgusted",
+      "descriptor": "negation",
+      "level": "core",
+      "group": "needs_not_met",
+      "color": "purple",
+      "children": [
+        {
+          "id": "disgusted.contempt",
+          "name": "Contempt",
+          "level": "secondary",
+          "children": [
+            { "id": "disgusted.contempt.hateful", "name": "Hateful", "level": "tertiary" },
+            { "id": "disgusted.contempt.scorn", "name": "Scorn", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "disgusted.repulsive",
+          "name": "Repulsive",
+          "level": "secondary",
+          "children": [
+            { "id": "disgusted.repulsive.nauseous", "name": "Nauseous", "level": "tertiary" },
+            { "id": "disgusted.repulsive.sickened", "name": "Sickened", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "disgusted.apathetic",
+          "name": "Apathetic",
+          "level": "secondary",
+          "children": [
+            { "id": "disgusted.apathetic.bored", "name": "Bored", "level": "tertiary" },
+            { "id": "disgusted.apathetic.uninterested", "name": "Uninterested", "level": "tertiary" }
+          ]
+        },
+        {
+          "id": "disgusted.averse",
+          "name": "Averse",
+          "level": "secondary",
+          "children": [
+            { "id": "disgusted.averse.resistant", "name": "Resistant", "level": "tertiary" },
+            { "id": "disgusted.averse.reluctant", "name": "Reluctant", "level": "tertiary" }
+          ]
+        }
+      ]
+    }
+  ]
+}

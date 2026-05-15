@@ -111,6 +111,28 @@
   .exercise-steps li:last-child { border-bottom: none; }
   .exercise-steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 14px; width: 28px; height: 28px; background: var(--accent-soft); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
 
+  .explore-card { width: 100%; background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); border: 1px solid var(--accent-soft); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; }
+  .explore-card:active { opacity: 0.85; }
+  .explore-card .ec-text { font-size: 13px; color: var(--text-dim); line-height: 1.45; }
+  .explore-card .ec-text strong { color: var(--text); font-size: 14px; display: block; margin-bottom: 2px; font-weight: 600; }
+  .explore-card .ec-arrow { color: var(--accent); font-size: 20px; flex-shrink: 0; }
+
+  .explore-body { flex: 1; overflow-y: auto; padding: 8px 20px 28px; }
+  .explore-crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--text-dim); margin-bottom: 20px; min-height: 16px; }
+  .explore-crumbs button { color: var(--accent); font-size: 12px; padding: 0; }
+  .explore-crumbs .sep { opacity: 0.5; }
+  .explore-prompt { font-size: 18px; font-weight: 600; color: var(--text); margin: 0 0 18px; }
+  .explore-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .explore-opt { background: var(--surface); border-radius: 12px; padding: 16px 10px; font-size: 15px; font-weight: 500; color: var(--text); text-align: center; transition: transform 0.1s, background 0.2s; }
+  .explore-opt:active { transform: scale(0.96); background: var(--surface-2); }
+  .explore-back { margin-top: 18px; width: 100%; background: transparent; color: var(--text-dim); padding: 12px; font-size: 14px; border: 1px solid var(--surface-2); border-radius: 12px; }
+  .explore-result { text-align: center; padding: 36px 8px 0; }
+  .explore-result .er-path { font-size: 13px; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 16px; }
+  .explore-result .er-name { font-size: 30px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+  .explore-result .er-help { font-size: 14px; color: var(--text-dim); line-height: 1.55; margin-bottom: 32px; }
+  .explore-result .btn-primary { margin-bottom: 10px; }
+  .explore-result .er-secondary { width: 100%; background: transparent; color: var(--text-dim); padding: 12px; font-size: 14px; }
+
   .modal-footer { padding: 12px 20px 20px; }
   .btn-primary { width: 100%; background: var(--accent); color: var(--bg); padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 600; }
   .btn-primary:active { opacity: 0.85; }
@@ -508,9 +530,14 @@ function renderHome() {
         </div>
       </div>
     ` : ''}
+    <button class="explore-card" id="exploreCard">
+      <span class="ec-text"><strong>Not sure what you're feeling?</strong>Work down from a broad feeling to the exact one.</span>
+      <span class="ec-arrow">→</span>
+    </button>
     <p class="section-title">How are you feeling?</p>
     <div class="grid" id="feelingGrid"></div>
   `;
+  document.getElementById('exploreCard').addEventListener('click', openExplorer);
   const grid = document.getElementById('feelingGrid');
   FEELINGS.forEach((f) => {
     const btn = document.createElement('button');
@@ -653,13 +680,14 @@ function escapeHtml(s) {
 
 /* ============ VERSE MODAL ============ */
 
-function openVerse(feeling) {
+function openVerse(feeling, label) {
+  const displayName = label || feeling.name;
   const pick = pickVerse(feeling);
   const modal = document.createElement('div');
   modal.className = 'modal';
   modal.innerHTML = `
     <div class="modal-header">
-      <span class="feeling-label">${feeling.emoji} ${feeling.name}</span>
+      <span class="feeling-label">${feeling.emoji} ${escapeHtml(displayName)}</span>
       <button class="close" aria-label="Close">×</button>
     </div>
     <div class="modal-body">
@@ -686,7 +714,7 @@ function openVerse(feeling) {
     try {
       await addEntry({
         type: 'feeling',
-        feeling: feeling.name,
+        feeling: displayName,
         emoji: feeling.emoji,
         reference: pick.reference,
         verse: pick.verse,
@@ -725,6 +753,114 @@ function openExercise(feeling) {
   `;
   document.body.appendChild(modal);
   modal.querySelector('.close').addEventListener('click', () => modal.remove());
+}
+
+/* ============ EMOTION EXPLORER ============ */
+
+let EMOTIONS = null;
+
+async function loadEmotions() {
+  if (EMOTIONS) return;
+  const res = await fetch('emotions.json', { cache: 'no-cache' });
+  if (!res.ok) throw new Error('Could not load emotions');
+  EMOTIONS = await res.json();
+}
+
+const CORE_TO_FEELING = {
+  angry: 'Angry', proud: 'Grateful', joyful: 'Grateful', intrigued: 'Grateful',
+  trusting: 'Peaceful', loving: 'Grateful', peaceful: 'Peaceful', ashamed: 'Guilty',
+  sad: 'Sad', surprised: 'Overwhelmed', afraid: 'Afraid', disgusted: 'Bitter',
+};
+
+function findFeelingByName(name) {
+  if (!name) return null;
+  const n = name.trim().toLowerCase();
+  return FEELINGS.find((f) => f.name.toLowerCase() === n) || null;
+}
+
+function resolveGrounding(path) {
+  const [core, sec, ter] = path;
+  const match =
+    findFeelingByName(ter && ter.name) ||
+    findFeelingByName(sec && sec.name) ||
+    findFeelingByName(core && core.name) ||
+    findFeelingByName(CORE_TO_FEELING[core.id]) ||
+    FEELINGS[0];
+  return { feeling: match, label: (ter || sec || core).name };
+}
+
+async function openExplorer() {
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-header">
+      <span class="feeling-label">Name the feeling</span>
+      <button class="close" aria-label="Close">×</button>
+    </div>
+    <div class="explore-body" id="exploreBody">
+      <div class="loading"><span class="spinner"></span>Loading…</div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector('.close').addEventListener('click', () => modal.remove());
+  const body = modal.querySelector('#exploreBody');
+
+  try {
+    await loadEmotions();
+  } catch {
+    body.innerHTML = `<div class="empty">Couldn't load the feelings list. Check your connection and try again.</div>`;
+    return;
+  }
+
+  let path = [];
+
+  const optionsAt = () => (path.length === 0 ? EMOTIONS.emotions : (path[path.length - 1].children || []));
+  const promptAt = () => (path.length === 0 ? 'Start broad — what feels closest?' : path.length === 1 ? 'Getting warmer — which of these?' : 'Most precise — pick the closest:');
+
+  function renderLevel() {
+    if (path.length === 3) return renderResult();
+    const crumbs = ['<button data-i="-1">Feelings</button>']
+      .concat(path.map((n, i) => `<span class="sep">›</span><button data-i="${i}">${escapeHtml(n.name)}</button>`))
+      .join('');
+    const opts = optionsAt()
+      .map((n, i) => `<button class="explore-opt" data-opt="${i}">${escapeHtml(n.name)}</button>`)
+      .join('');
+    body.innerHTML = `
+      <div class="explore-crumbs">${crumbs}</div>
+      <p class="explore-prompt">${promptAt()}</p>
+      <div class="explore-grid">${opts}</div>
+      ${path.length > 0 ? '<button class="explore-back" id="exploreBack">← Back a step</button>' : ''}
+    `;
+    body.querySelectorAll('[data-opt]').forEach((b) => {
+      b.addEventListener('click', () => { path.push(optionsAt()[Number(b.dataset.opt)]); renderLevel(); });
+    });
+    body.querySelectorAll('.explore-crumbs button').forEach((b) => {
+      b.addEventListener('click', () => { path = path.slice(0, Number(b.dataset.i) + 1); renderLevel(); });
+    });
+    const back = body.querySelector('#exploreBack');
+    if (back) back.addEventListener('click', () => { path.pop(); renderLevel(); });
+  }
+
+  function renderResult() {
+    const { feeling, label } = resolveGrounding(path);
+    const pathStr = path.map((n) => escapeHtml(n.name)).join('  ›  ');
+    body.innerHTML = `
+      <div class="explore-result">
+        <div class="er-path">${pathStr}</div>
+        <div class="er-name">${escapeHtml(label)}</div>
+        <div class="er-help">Naming it precisely is itself a step toward calm. When you're ready, take a verse, a prayer, and a grounding exercise for this.</div>
+        <button class="btn-primary" id="exploreGround">Continue to a verse</button>
+        <button class="er-secondary" id="exploreRestart">Start over</button>
+      </div>
+    `;
+    body.querySelector('#exploreGround').addEventListener('click', () => {
+      modal.remove();
+      openVerse(feeling, label);
+    });
+    body.querySelector('#exploreRestart').addEventListener('click', () => { path = []; renderLevel(); });
+  }
+
+  renderLevel();
 }
 
 /* ============ SETTINGS SHEET ============ */
